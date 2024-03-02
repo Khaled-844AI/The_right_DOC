@@ -161,5 +161,6 @@ cython_debug/
 
 db.sqlite3
 /files
-.idea
-/djangoProject3/settings.py
+.idea/
+djangoProject3/settings.py
+
