@@ -1,0 +1,201 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{%  static 'style.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <title>DocFinder</title>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="nav-bar">
+        <a class="logo-container">
+          <img src="{%  static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
+        </a>
+        <form action="" class="search-bar">
+          <input
+            id="search-bar"
+            type="text"
+            placeholder="Search"
+            name="search-bar"
+          />
+          <button type="submit" class="search-btn">
+            <img src="{% static 'img/search-icon.png'%}" class="search-img" />
+          </button>
+        </form>
+        <div class="flex-align">
+          <a href="{% url 'pat-or-doc'%}" class="register nav-button">s'inscrire</a>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="section-hero">
+        <div class="hero">
+          <div class="hero-text-box">
+            <h1 class="heading-primary animate">
+              Doctor reservation service
+            </h1>
+
+            <p class="hero-description">
+              Welcome to<B> The right DOC</B> , We understand the importance of timely healthcare, which is why we've made it easier than ever for you to book appointments with top medical professionals in your area. Whether you're seeking routine check-ups, specialized consultations, or urgent medical care, our user-friendly interface allows you to find the right doctor and reserve your preferred time slot effortlessly
+            </p>
+
+            <a href="{% url 'pat-or-doc'%}" class="btn btn--fill margin-right-sm animate">get started</a>
+            <a href="#" class="btn btn--outline animate">learn more &darr;</a>
+          </div>
+          <div class="hero-img-box">
+            <img src="{% static 'img/Medicine-bro.png'%}" class="hero-img" />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="section-info">
+      <div class="container grid grid--2-cols grid--center-v">
+        <!-- info 01 -->
+        <div class="info-text-box">
+          <ion-icon name="time-outline" class="info-icon"></ion-icon>
+          <h3 class="heading-tertiary animate">
+            Save your time
+          </h3>
+          <p class="info-description animate">
+              At <b>The right DOC</b>, we prioritize your health and convenience. Our comprehensive database features a diverse range of healthcare providers, ensuring that you can find a doctor who meets your specific needs and preferences. From general practitioners to specialists in various fields such as cardiology, dermatology, and pediatrics, our platform connects you with reputable professionals committed to delivering exceptional care.
+          </p>
+        </div>
+
+        <div class="info-img-box">
+          <img src="{%  static 'img/time-manage.png'%}" alt="" class="info-img" />
+        </div>
+
+        <!-- info 02 -->
+        <div class="info-img-box">
+          <img src="" alt="" class="info-img" />
+        </div>
+
+        <div class="info-text-box">
+          <h3 class="heading-tertiary">
+            Lorem ipsum dolor sit amet consectetur adipisicing
+          </h3>
+          <p class="info-description animate">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia
+            earum atque dolor doloremque quia id quo non hic mollitia nam
+            accusantium ut, magni temporibus facere nulla soluta consectetur
+            nemo esse?
+          </p>
+        </div>
+        <!-- info 03 -->
+
+        <div class="info-text-box">
+          <h3 class="heading-tertiary">
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit
+          </h3>
+          <p class="info-description animate">
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Provident
+            voluptatem quas laboriosam sit animi illum odio, assumenda, minus
+            itaque dolores nostrum sequi recusandae alias officia doloremque
+            facilis error repudiandae aliquid.
+          </p>
+        </div>
+
+        <div class="step-img-box">
+          <img src="" alt="" class="step-img" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section-cta">
+      <div class="container">
+        <div class="cta">
+          <div class="cta-text-box">
+            <h2 class="heading-secondary">
+              meet your doctor at the right place
+            </h2>
+            <p class="cta-text animate">
+
+                Explore nearby healthcare services effortlessly with our map feature.
+                Find doctors and facilities close to you, access contact details,
+                and discover available services with ease. DocFinder ensures quality
+                healthcare is always within reach.
+            </p>
+            <form class="cta-form">
+              <button class="btn btn--form">Get started</button>
+              <button class="btn btn--form">Learn more</button>
+            </form>
+          </div>
+          <div class="cta-img-box"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container grid grid-footer">
+        <div class="logo-col">
+          <a class="footer-logo" href="#">
+            <img
+              src="{% static 'img/logo-footer.png'%}"
+              alt="The Right Doc logo"
+              class="footer-logo"
+            />
+          </a>
+          <ul class="social-links">
+            <li>
+              <ion-icon class="footer-icon" name="logo-instagram"></ion-icon>
+            </li>
+            <li>
+              <ion-icon class="footer-icon" name="logo-facebook"></ion-icon>
+            </li>
+            <li>
+              <ion-icon class="footer-icon" name="logo-twitter"></ion-icon>
+            </li>
+          </ul>
+          <p class="copyright">
+            Copyright &copy; <span class="year">2024</span> by The Right Doc,
+            Inc. All rights reserved.
+          </p>
+        </div>
+        <div class="address-col">
+          <p class="footer-heading">Contact us</p>
+          <address class="contacts">
+            <p class="address">
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit
+            </p>
+            <p>
+              <a class="footer-link" href="tel:415-201-6370">415-201-6370</a
+              ><br />
+              <a class="footer-link" href="mailto:talebk9@gmail.com"
+                >talebk9@gmail.com</a
+              >
+            </p>
+          </address>
+        </div>
+
+        <nav class="nav-col">
+          <p class="footer-heading">Ressours</p>
+          <ul class="footer-nav">
+            <li><a class="footer-link" href="#">Recipe directory</a></li>
+            <li><a class="footer-link" href="#">Help center</a></li>
+            <li><a class="footer-link" href="#">Privacy & terms</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+       <script src = "{% static 'script.js' %}"></script>
+  </body>
+</html>

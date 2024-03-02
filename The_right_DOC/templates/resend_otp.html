@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'register.css' %}"/>
+    <title>Login page</title>
+</head>
+
+<body>
+{% block content %}
+
+<style>
+    form {
+        height: auto;
+        padding:  10px 50px;
+        box-shadow: rgba(0, 0, 0, 0.35) 5px 15px;
+        margin: 10px auto;
+        border-radius: 10px;
+        text-align: center;
+    }
+    button {
+        width: 200px;
+    }
+
+    form ::placeholder {
+        color: black;
+    }
+</style>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">
+                {{ message|safe }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<form action="" method='POST' class="container_verify">
+    {% csrf_token %}
+    <h3><strong>Resend OTP</strong></h3><br><br>
+    <div class="mb-3">
+        <label class="form-label"></label>
+        <input type="email" class="form-control" name="otp_email" placeholder="Enter email-address">
+    </div>
+
+    <button class="btn btn-primary">Send OTP</button>
+    {% comment %} <p>Need a new OTP? <a href="">Resend OTP</a></p> {% endcomment %}
+
+</form>
+{% endblock content %}
+</body>

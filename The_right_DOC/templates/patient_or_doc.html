@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'register.css' %}"/>
+    <title>Login page</title>
+</head>
+
+<body>
+
+{% block content %}
+
+<style>
+    .container_verify {
+        height: 300px;
+        padding:  10px 50px;
+        box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
+        margin: 10px auto;
+        border-radius: 50px;
+        text-align: center;
+    }
+    .btn {
+        display: inline-block;
+        width: 250px;
+        height: 50px;
+        line-height: 50px;
+        text-decoration: none;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 15px;
+        margin: 10px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container_verify">
+    <br><br>
+    <h3><strong>Choose</strong></h3>
+    <a href="{% url 'register-doctor' %}" class="btn">Doctor</a>
+    <a href="{% url 'register-patient' %}" class="btn">Patient</a>
+</div>
+
+{% endblock content %}
+
+</body>
+</html>
+

@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Display a globe on a webpage</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'style.css' %}" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+/* Popups (adjustments to emulate Leaflet.js) - see https://github.com/mapbox/mapbox-gl-js/issues/8368 */
+@keyframes fadein {from {opacity: 0;} to {opacity: 1;}}
+.mapboxgl-popup {animation: fadein 0.2s;}
+.mapboxgl-popup-content {align-items:center;max-width: 60rem; min-width: 20rem; border-radius: 12px; padding: 13px 19px; box-shadow: 0 3px 14px rgba(12, 211, 246, 5);
+min-height: 10rem;max-height: 40rem}
+.mapboxgl-popup-close-button {font-size: 16px; font-family: Tahoma, Verdana, sans-serif; color: #c3c3c3; font-weight: bold;}
+.mapboxgl-popup-close-button:hover {color: #999; background-color: white; border-top-right-radius: 12px;}
+body .mapboxgl-map {line-height: 1.4;}
+</style>
+</head>
+
+<body>
+<div id="map"></div>
+
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoibW91YWRraGFsZWQiLCJhIjoiY2x0NjYxZXh2MGE3NjJrbXkxM2h6aXZueiJ9.zmSuYIepl-PgUQygEE5Szw';
+const map = new mapboxgl.Map({
+container: 'map',
+// Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+style: 'mapbox://styles/mapbox/satellite-streets-v11',
+zoom: 12,
+center: [-0.634160,35.192503],
+projection: 'globe'
+});
+
+{% for marker in markers %}
+// Add marker to the map
+const popup = new mapboxgl.Popup({ offset: 25}).setHTML(
+      '<h2>DR.{{ marker.doctor__full_name }}</h2>' +
+      '<b>-Specialty:{{ marker.doctor__specialty }}</b>'+
+      '<a href="{% url 'pat-or-doc'%}" class="btn_map btn--fill ">reserve now</a>'
+);
+
+new mapboxgl.Marker()
+    .setLngLat([{{ marker.longitude }}, {{ marker.latitude }}])
+    .setPopup(popup)
+    .addTo(map);
+{% endfor %}
+</script>
+
+</body>
+</html>
