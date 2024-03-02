@@ -160,7 +160,7 @@ cython_debug/
 #.idea/
 
 db.sqlite3
-/files
+/files/Certificate
 .idea/
-djangoProject3/settings.py
+/djangoProject3/settings.py
 
