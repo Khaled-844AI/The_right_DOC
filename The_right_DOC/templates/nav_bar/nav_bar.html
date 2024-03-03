@@ -1,0 +1,18 @@
+{% load static %}
+<nav class="nav-bar">
+  <a class="logo-container">
+    <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
+  </a>
+  <form action="" class="search-bar">
+    <input
+      id="search-bar"
+      type="text"
+      placeholder="Search"
+      name="search-bar"
+    />
+    <button type="submit" class="search-btn">
+      <img src="{% static 'img/search-icon.png'%}" class="search-img" />
+    </button>
+  </form>
+
+</nav>

@@ -6,11 +6,50 @@ from The_right_DOC.models import Doctor_S_up, Patient_S_up, Markers
 
 
 SPECIALTY_CHOICES = [
-    ('Cardiology', 'Cardiology'),
-    ('Dermatology', 'Dermatology'),
-    ('Endocrinology', 'Endocrinology'),
-    # Add more specialties as needed
+    ("Anatomie pathologique", "Anatomie pathologique"),
+    ("Anesthésie-réanimation", "Anesthésie-réanimation"),
+    ("Biochimie", "Biochimie"),
+    ("Biologie clinique", "Biologie clinique"),
+    ("Cardiologie", "Cardiologie"),
+    ("Chirurgie générale", "Chirurgie générale"),
+    ("Chirurgie orthopédique", "Chirurgie orthopédique"),
+    ("Chirurgie pédiatrique", "Chirurgie pédiatrique"),
+    ("Chirurgie urologique", "Chirurgie urologique"),
+    ("Chirurgie maxillo-faciale", "Chirurgie maxillo-faciale"),
+    ("Chirurgie cardio-vasculaire", "Chirurgie cardio-vasculaire"),
+    ("Dermatologie", "Dermatologie"),
+    ("Endocrinologie – Diabétologie", "Endocrinologie – Diabétologie"),
+    ("Gastro-entérologie", "Gastro-entérologie"),
+    ("Gynéco-Obstétrique", "Gynéco-Obstétrique"),
+    ("Hématologie", "Hématologie"),
+    ("Hémobiologie", "Hémobiologie"),
+    ("Histo-embryologie", "Histo-embryologie"),
+    ("Immunologie", "Immunologie"),
+    ("Maladies infectieuses", "Maladies infectieuses"),
+    ("Médecine interne", "Médecine interne"),
+    ("Médecine légale", "Médecine légale"),
+    ("Médecine nucléaire", "Médecine nucléaire"),
+    ("Médecine du travail", "Médecine du travail"),
+    ("Microbiologie", "Microbiologie"),
+    ("Néphrologie", "Néphrologie"),
+    ("Neurochirurgie", "Neurochirurgie"),
+    ("Neurologie", "Neurologie"),
+    ("O.R.L.", "O.R.L."),
+    ("Ophtalmologie", "Ophtalmologie"),
+    ("Oncologie médicale", "Oncologie médicale"),
+    ("Parasitologie", "Parasitologie"),
+    ("Pédiatrie", "Pédiatrie"),
+    ("Pharmacologie clinique", "Pharmacologie clinique"),
+    ("Physiologie", "Physiologie"),
+    ("Pneumo-phtisiologie", "Pneumo-phtisiologie"),
+    ("Psychiatrie", "Psychiatrie"),
+    ("Radiologie - imagerie", "Radiologie - imagerie"),
+    ("Radiothérapie", "Radiothérapie"),
+    ("Rééducation fonctionnelle", "Rééducation fonctionnelle"),
+    ("Rhumatologie", "Rhumatologie")
 ]
+
+
 
 class Doctor_RegistrationForm(forms.Form):
     email = forms.EmailField(widget=forms.TextInput(attrs={

@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm
 from The_right_DOC.models import Doctor_S_up, Patient_S_up, OtpToken, Markers
 from django.contrib.auth.decorators import login_required
-
+from The_right_DOC.form import SPECIALTY_CHOICES
 
 def main_page(request):
     return render(request, 'index.html')
@@ -188,4 +188,4 @@ def map(request):
     markers = Markers.objects.all().values('doctor__full_name', 'doctor__specialty',
                                            'latitude', 'longitude', 'description')
     # Pass the marker data to the template
-    return render(request, 'map.html', {'markers': markers})
+    return render(request, 'map.html', {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})

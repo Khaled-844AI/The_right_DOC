@@ -270,15 +270,18 @@ a:visited {
 }
 
 .search-bar {
-  width: 100%;
+  width: 100%;  /* Keeps the bar spanning the full width of its container */
   max-width: 50rem;
   height: 6rem;
   background: rgba(255, 255, 255, 0.2);
-  display: flex;
+  /* Set display to block to enable centering */
+  display: inherit;
   align-items: center;
   border-radius: 60px;
   padding: 1rem 2rem;
   border: 1px solid rgba(0, 0, 0, 0.2);
+  /* Margin: 0 auto; centers the element horizontally within its container */
+  margin: 0 auto;
 }
 
 .search-bar input {
