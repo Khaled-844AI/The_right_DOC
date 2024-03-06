@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
 ROOT_URLCONF = 'djangoProject3.urls'
 
 TEMPLATES = [
@@ -91,7 +91,7 @@ EMAIL_HOST_USER = 'mouadkhaled2004@gmail.com'
 EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
+EMAIL_USE_SSL = False
 PASSWORD_RESET_TIMEOUT = 14400
 
 

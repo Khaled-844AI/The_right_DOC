@@ -37,6 +37,16 @@
     }
 </style>
 
+        {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">
+                {{ message|safe }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 <div class="container_verify">
     <br><br>
     <h3><strong>Choose</strong></h3>

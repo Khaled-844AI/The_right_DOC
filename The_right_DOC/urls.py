@@ -8,5 +8,6 @@ urlpatterns = [
     path("verify-email/<slug:username>", views.verify_email, name="verify-email"),
     path("resend-otp", views.resend_otp, name="resend-otp"),
     path("register", views.choose, name="pat-or-doc"),
+    path("<slug:full_name>/profile", views.doctor_profile, name="doctor-profile"),
     path("map", views.map, name="map"),
 ]

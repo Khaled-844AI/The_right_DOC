@@ -17,6 +17,7 @@ class Patient_Admin(UserAdmin):
 class OtpTokenAdmin(admin.ModelAdmin):
     list_display = ("user", "otp_code")
 
+
 class MarkersAdmin(admin.ModelAdmin):
     list_display = ("doctor", "latitude", "longitude", "description")
 

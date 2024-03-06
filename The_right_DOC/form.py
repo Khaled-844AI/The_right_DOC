@@ -103,6 +103,12 @@ class Doctor_RegistrationForm(forms.Form):
             raise forms.ValidationError('This email is already in use.')
         return email
 
+    def clean_full_name(self):
+        full_name = self.cleaned_data.get('full_name')
+        if Doctor_S_up.objects.filter(full_name=full_name).exists():
+            raise forms.ValidationError('this username already exists')
+        return full_name
+
     def save(self, commit=True):
         doctor = Doctor_S_up(
             full_name=self.cleaned_data['full_name'],
@@ -150,26 +156,4 @@ class Patient_RegistrationForm(UserCreationForm):
         model = get_user_model()
         fields = ["email", "username", "password1", "password2"]
 
-    def clean_password2(self):
-        # Check that the two password entries match
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
-        return password2
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if Patient_S_up.objects.filter(email=email).exists():
-            raise forms.ValidationError('This email is already in use.')
-        return email
-
-    def save(self, commit=True):
-        user = Patient_S_up(
-            username=self.cleaned_data['username'],
-            email=self.cleaned_data['email'],
-            password=make_password(self.cleaned_data['password1'])
-        )
-        if commit:
-            user.save()
-        return user

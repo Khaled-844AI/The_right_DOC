@@ -1,11 +1,10 @@
 from django.contrib.auth.hashers import check_password
-from django.http import JsonResponse
+from django.db.models.signals import post_save
 from django.utils import timezone
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, get_user_model
-from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage, send_mail
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 
 from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm
@@ -13,8 +12,10 @@ from The_right_DOC.models import Doctor_S_up, Patient_S_up, OtpToken, Markers
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
 
+
 def main_page(request):
     return render(request, 'index.html')
+
 
 def verify_email(request, username):
     user = get_user_model().objects.get(username=username)
@@ -85,7 +86,7 @@ def resend_otp(request):
 
         else:
 
-            messages.warning(request, "This email dosen't exist in the database")
+            messages.error(request, "This email dosen't exist in the database")
             storage = messages.get_messages(request)
             storage.used = True
             return redirect("/register")
@@ -107,7 +108,7 @@ def register_doctor(request):
                 return redirect('/register/doctor')
             else:
                 for error in list(form.errors.values()):
-                    messages.success(request, error)
+                    messages.error(request, error)
                     storage = messages.get_messages(request)
                     storage.used = True
         elif 'sign_in' in request.POST:
@@ -146,20 +147,20 @@ def register_patient(request):
             form = Patient_RegistrationForm(request.POST)
             if form.is_valid():
                 user = form.save()
-                user.is_active = False
-                user.save()
                 print("Form saved successfully.")
                 messages.success(request, f'Hy {user.username}, your account has been created successfully.\
-                    Please check your email at {user.email} for verification instructions.')
+                    \nPlease check your email at {user.email} for verification instructions.')
                 return redirect('verify-email', username=request.POST['username'])
             else:
                 for error in list(form.errors.values()):
-                    print(error)
+                    messages.error(request, error)
+                    storage = messages.get_messages(request)
+                    storage.used = True
         elif 'sign_in' in request.POST:
             email = request.POST.get('email2')
             password = request.POST.get('pass2')
             user = authenticate(request, email=email, password=password)
-            if user is not None:
+            if user is not None and user.is_active:
                 login(request, user)
                 messages.success(request, "Logged In Successfully!!")
                 return redirect('/map')
@@ -180,6 +181,13 @@ def register_patient(request):
 
 def choose(request):
     return render(request, "patient_or_doc.html")
+
+
+def doctor_profile(request, full_name):
+    doctor = Doctor_S_up.objects.filter(full_name=full_name).values('full_name', 'specialty',
+                                                                    'email', 'office_location')
+
+    return render(request, 'doctor_prof.html', {'doctor': doctor})
 
 
 @login_required(login_url='/register')

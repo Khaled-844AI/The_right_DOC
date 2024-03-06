@@ -83,8 +83,7 @@ function filterMarkersBySpecialty(specialty) {
         marker.remove();
     });
 
-    markers = markersData
-        .filter(marker => marker.specialty === specialty)
+    markers = markersData.filter(marker => specialty === '' || marker.specialty === specialty)
         .map(marker => {
             const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
                 `<h2>Dr. ${marker.fullName}</h2>` +
