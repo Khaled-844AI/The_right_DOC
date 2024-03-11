@@ -22,7 +22,13 @@ class MarkersAdmin(admin.ModelAdmin):
     list_display = ("doctor", "latitude", "longitude", "description")
 
 
-admin.site.register(Doctor_S_up)
+class DoctorAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        obj.check_duration(request)
+        super().save_model(request, obj, form, change)
+
+
+admin.site.register(Doctor, DoctorAdmin)
 admin.site.register(OtpToken, OtpTokenAdmin)
-admin.site.register(Patient_S_up, Patient_Admin)
+admin.site.register(Patient, Patient_Admin)
 admin.site.register(Markers, MarkersAdmin)

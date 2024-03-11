@@ -2,8 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.hashers import make_password
-from The_right_DOC.models import Doctor_S_up, Patient_S_up, Markers
-
+from The_right_DOC.models import Doctor,  Markers
+from django.contrib import messages
 
 SPECIALTY_CHOICES = [
     ("Anatomie pathologique", "Anatomie pathologique"),
@@ -48,6 +48,90 @@ SPECIALTY_CHOICES = [
     ("Rééducation fonctionnelle", "Rééducation fonctionnelle"),
     ("Rhumatologie", "Rhumatologie")
 ]
+
+from django import forms
+from django.contrib import messages
+
+AVAILABLE_TIMES = [
+    ('05:00', '05:00'),
+    ('05:30', '05:30'),
+    ('06:00', '06:00'),
+    ('06:30', '06:30'),
+    ('07:00', '07:00'),
+    ('07:30', '07:30'),
+    ('08:00', '08:00'),
+    ('08:30', '08:30'),
+    ('09:00', '09:00'),
+    ('09:30', '09:30'),
+    ('10:00', '10:00'),
+    ('10:30', '10:30'),
+    ('11:00', '11:00'),
+    ('11:30', '11:30'),
+    ('12:00', '12:00'),
+    ('12:30', '12:30'),
+    ('13:00', '13:00'),
+    ('13:30', '13:30'),
+    ('14:00', '14:00'),
+    ('14:30', '14:30'),
+    ('15:00', '15:00'),
+    ('15:30', '15:30'),
+    ('16:00', '16:00'),
+    ('16:30', '16:30'),
+    ('17:00', '17:00'),
+    ('17:30', '17:30'),
+    ('18:00', '18:00'),
+    ('18:30', '18:30'),
+    ('19:00', '19:00')
+]
+
+VISIT_DUR = [
+    ('10', '10'),
+    ('20', '20'),
+    ('30', '30'),
+    ('40', '40'),
+    ('50', '50'),
+    ('60', '60')
+]
+
+
+class Doctor_timingForm(forms.Form):
+    start_w = forms.ChoiceField(choices=AVAILABLE_TIMES, widget=forms.Select(attrs={
+        'class': 'select',
+        'placeholder': 'start at',
+        'required': 'True'
+    }))
+
+    end_w = forms.ChoiceField(choices=AVAILABLE_TIMES, widget=forms.Select(attrs={
+        'class': 'select',
+        'placeholder': 'finish at',
+        'required': 'True'
+    }))
+
+    visit_dur = forms.ChoiceField(choices=VISIT_DUR, widget=forms.Select(attrs={
+        'class': 'select',
+        'placeholder': 'Select Specialty',
+        'required': 'True'
+    }))
+
+    def check_duration(self, request):
+        start = self.cleaned_data.get('start_w')
+        end = self.cleaned_data.get('end_w')
+
+        s_hour, s_min = start.split(":")
+        e_hour, e_min = end.split(":")
+
+        if int(s_hour) > int(e_hour) or int(s_hour) == int(e_hour):
+            messages.error(request, "Invalid time")  # Corrected this line
+
+    def save(self,doctor):
+        doctor.start_w = self.start_w
+        doctor.end_w = self.end_w
+        doctor.visit_duration = self.visit_dur
+        doctor.save()
+
+        return doctor
+
+
 
 
 
@@ -99,18 +183,18 @@ class Doctor_RegistrationForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if Doctor_S_up.objects.filter(email=email).exists():
+        if Doctor.objects.filter(email=email).exists():
             raise forms.ValidationError('This email is already in use.')
         return email
 
     def clean_full_name(self):
         full_name = self.cleaned_data.get('full_name')
-        if Doctor_S_up.objects.filter(full_name=full_name).exists():
+        if Doctor.objects.filter(full_name=full_name).exists():
             raise forms.ValidationError('this username already exists')
         return full_name
 
     def save(self, commit=True):
-        doctor = Doctor_S_up(
+        doctor = Doctor(
             full_name=self.cleaned_data['full_name'],
             email=self.cleaned_data['email'],
             office_location=self.cleaned_data['office_location'],

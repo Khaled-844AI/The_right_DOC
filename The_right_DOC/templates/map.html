@@ -55,7 +55,7 @@ body .mapboxgl-map {line-height: 1.4;}
 </div>
 
 <script>
-mapboxgl.accessToken = '';
+mapboxgl.accessToken = 'pk.eyJ1IjoibW91YWRraGFsZWQiLCJhIjoiY2x0NjYxZXh2MGE3NjJrbXkxM2h6aXZueiJ9.zmSuYIepl-PgUQygEE5Szw';
 const map = new mapboxgl.Map({
     container: 'map',
     // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
@@ -85,10 +85,13 @@ function filterMarkersBySpecialty(specialty) {
 
     markers = markersData.filter(marker => specialty === '' || marker.specialty === specialty)
         .map(marker => {
+            const fullNameEncoded = encodeURIComponent(marker.fullName);
+            const url = `/doctor-profile/${fullNameEncoded}`;
+
             const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
                 `<h2>Dr. ${marker.fullName}</h2>` +
                 `<b>-Specialty: ${marker.specialty}</b>` +
-                `<a href="{% url 'pat-or-doc' %}" class="btn_map btn--fill ">Reserve now</a>`
+                `<a href="${url}" class="btn_map btn--fill ">Reserve now</a>`
             );
 
             return new mapboxgl.Marker()

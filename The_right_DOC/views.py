@@ -7,11 +7,14 @@ from django.contrib.auth import authenticate, login, get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 
-from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm
-from The_right_DOC.models import Doctor_S_up, Patient_S_up, OtpToken, Markers
+from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm,Doctor_timingForm
+from The_right_DOC.models import Doctor, Patient, OtpToken, Markers
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
 
+
+
+AVAILABLE_TIMES = []
 
 def main_page(request):
     return render(request, 'index.html')
@@ -36,7 +39,7 @@ def verify_email(request, username):
             # expired token
             else:
                 messages.warning(request, "The OTP has expired, get a new OTP!")
-                patient = Patient_S_up.objects.filter(email=username)
+                patient = Patient.objects.filter(email=username)
                 patient.delete()
                 return redirect("verify-email", username=user.username)
 
@@ -115,7 +118,7 @@ def register_doctor(request):
             email = request.POST.get('email')
             password = request.POST.get('pass1')  # Adjust this according to your form field name
             try:
-                user = Doctor_S_up.objects.get(email=email)
+                user = Doctor.objects.get(email=email)
                 if check_password(password, user.password):  # Check hashed password
                     if user.accepted:
                         # Authenticate the doctor and redirect to doctor's page
@@ -128,7 +131,7 @@ def register_doctor(request):
                     messages.error(request, "Invalid credentials.")
                     storage = messages.get_messages(request)
                     storage.used = True
-            except Doctor_S_up.DoesNotExist:
+            except Doctor.DoesNotExist:
                 messages.error(request, "Invalid credentials.")
 
     form = Doctor_RegistrationForm()
@@ -183,17 +186,23 @@ def choose(request):
     return render(request, "patient_or_doc.html")
 
 
-def doctor_profile(request, full_name):
-    doctor = Doctor_S_up.objects.filter(full_name=full_name).values('full_name', 'specialty',
-                                                                    'email', 'office_location')
+def reservation(request, full_name):
+    doctor = Doctor.objects.get(full_name=full_name)
 
-    return render(request, 'doctor_prof.html', {'doctor': doctor})
+    return render(request, 'Patient_Dashboard/Reservation.html', {"doctor": doctor})
 
 
 @login_required(login_url='/register')
 def map(request):
-
     markers = Markers.objects.all().values('doctor__full_name', 'doctor__specialty',
                                            'latitude', 'longitude', 'description')
     # Pass the marker data to the template
     return render(request, 'map.html', {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
+
+
+
+
+
+
+
+
