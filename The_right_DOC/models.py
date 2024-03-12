@@ -84,3 +84,4 @@ class Appointment(models.Model):
     date = models.DateField()
     reason = models.TextField()
     ticket_number = models.IntegerField(null=True, blank=True, validators=[MaxValueValidator(50)])
+
