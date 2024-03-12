@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator
 from django.db import models
 from django.contrib import messages
 
@@ -76,3 +77,10 @@ class OtpToken(models.Model):
  #       super().clean()
   #      if Reservation.objects.filter(doctor=self.doctor, date=self.date, start_time__lte=self.end_time, end_time__gte=self.start_time).exists():
    #         raise ValidationError("Doctor is not available at this time.")
+
+class Appointment(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    date = models.DateField()
+    reason = models.TextField()
+    ticket_number = models.IntegerField(null=True, blank=True, validators=[MaxValueValidator(50)])
