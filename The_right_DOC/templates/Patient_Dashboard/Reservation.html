@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'register.css' %}"/>
+    <title>Login page</title>
+</head>
+
+<body>
+
+
+    <div class="container" id = "container"></div>
+
+
+<script>
+    const selectedDate = document.querySelector('.Calendar.active_d');
+    const startW = '{{ doctor.start_w }}';
+    const endW = '{{ doctor.end_w }}';
+    const visitDur = '{{ doctor.visit_duration }}';
+
+    function generateReservationTimes() {
+        const today = new Date(); // Get today's date
+
+        const startTime = new Date(`${new Date(today.getFullYear(),
+         today.getMonth(), today.getDate()).getDate()} ${startW}`).getTime();
+
+        const endTime = new Date(`${new Date(today.getFullYear(),
+         today.getMonth(), today.getDate()).getDate()} ${endW}`).getTime();
+
+        const visitDurMilliseconds = parseTimeToMilliseconds(visitDur.split(':').slice(0 , 2).join(':'));
+
+        const reservationTimes = [];
+        for(let time = startTime ; time<=endTime ; time+=visitDurMilliseconds){
+            const timeObj = new Date(time);
+            const hours = timeObj.getHours().toString().padStart(2 , '0');
+            const minutes = timeObj.getMinutes().toString().padStart(2, '0');
+            reservationTimes.push(`${hours}:${minutes}`)
+        }
+        return reservationTimes;
+    }
+
+    function parseTimeToMilliseconds(timeString) {
+        const [hours, minutes] = timeString.split(':').map(part => parseInt(part, 10)); // hours : min
+        return hours * 3600000 + minutes * 60000; // Convert hours and minutes to milliseconds
+    }
+
+    selectedDate.addEventListener('change', function () {
+        const selectedValue = this.value;
+        const availableTimes = generateReservationTimes();
+        // Do something with availableTimes based on selectedValue
+    });
+</script>
+
+</body>
+</html>

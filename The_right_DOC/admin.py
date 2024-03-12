@@ -28,6 +28,11 @@ class DoctorAdmin(admin.ModelAdmin):
         super().save_model(request, obj, form, change)
 
 
+class ReservationAdmin(admin.ModelAdmin):
+    list_display = ("doctor", "patient", "date", "start_time", "end_time")
+
+
+admin.site.register(Reservation, ReservationAdmin)
 admin.site.register(Doctor, DoctorAdmin)
 admin.site.register(OtpToken, OtpTokenAdmin)
 admin.site.register(Patient, Patient_Admin)

@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{%  static 'style.css' %}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="icon" href="{% static 'img/favicon.ico'%}" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
@@ -42,8 +41,10 @@
     </button>
   </form>
   <div class="flex-align">
-    <a href="{% url 'pat-or-doc'%}" class="register nav-button">register</a>
+    <a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a>
+      <a href="{% url 'register-patient'%}" class="register nav-button">Sign in</a>
   </div>
+
 </nav>
     </header>
 
