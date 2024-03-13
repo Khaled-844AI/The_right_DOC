@@ -1,8 +1,11 @@
+from datetime import datetime, timedelta
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.hashers import make_password
-from The_right_DOC.models import Doctor,  Markers
+
+from The_right_DOC.models import Doctor,  Markers , Reservation
 from django.contrib import messages
 
 SPECIALTY_CHOICES = [
@@ -85,13 +88,53 @@ AVAILABLE_TIMES = [
 ]
 
 VISIT_DUR = [
-    ('10', '10'),
-    ('20', '20'),
-    ('30', '30'),
-    ('40', '40'),
-    ('50', '50'),
-    ('60', '60')
+    ('10 min', '10 min'),
+    ('20 min', '20 min'),
+    ('30 min', '30 min'),
+    ('40 min', '40 min'),
+    ('50 min', '50 min'),
+    ('60 min', '60 min')
 ]
+
+RESERVATION_TIMES = []
+
+
+def generate_reservation_times(doctor):
+    today = datetime.today()  # Get today's date and time
+
+    hour_second_parts1 = [str(doctor.start_w).split(":")[0],
+                         str(doctor.start_w).split(":")[1]]  # Split by " : " and take the first and last elements
+    result1 = ":".join(hour_second_parts1)
+    hour_second_parts2 = [str(doctor.end_w).split(":")[0],
+                         str(doctor.end_w).split(":")[1]]  # Split by " : " and take the first and last elements
+    result2 = ":".join(hour_second_parts2)
+
+    start_time = datetime.strptime(result1, "%H:%M").time()
+    end_time = datetime.strptime(result2, "%H:%M").time()
+    visit_duration_timedelta = timedelta(hours=int(str(doctor.visit_duration).split(':')[1]),
+                                         minutes=int(str(doctor.visit_duration).split(':')[2]))
+
+    current_time = datetime.combine(today.date(), start_time)
+    end_datetime = datetime.combine(today.date(), end_time)
+
+    while current_time <= end_datetime:
+        RESERVATION_TIMES.append(current_time.strftime("%H:%M"))
+        current_time += visit_duration_timedelta
+
+
+
+class ReservationForm(forms.Form):
+
+    start_w = forms.ChoiceField(choices=RESERVATION_TIMES, widget=forms.Select(attrs={
+        'class': 'select',
+        'placeholder': 'available reservations',
+        'required': 'True'
+    }))
+
+    def __init__(self, doctor, *args, **kwargs):
+        super(ReservationForm, self).__init__(*args, **kwargs)
+
+        generate_reservation_times(doctor)
 
 
 class Doctor_timingForm(forms.Form):

@@ -3,7 +3,6 @@ from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator
 from django.db import models
 from django.contrib import messages
 
@@ -12,7 +11,7 @@ from django.contrib import messages
 
 
 class Doctor(models.Model):
-    full_name = models.CharField(max_length=50)
+    full_name = models.CharField(unique=True, max_length=50)
     email = models.EmailField(unique=True)
     office_location = models.CharField(max_length=50)
     specialty = models.CharField( max_length=20)
@@ -76,7 +75,6 @@ class Reservation(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
 
-<<<<<<< HEAD
     def check_duration(self):
         if self.start_time >= self.end_time:
             raise ValidationError('Invalid time: Start time must be before end time.')
@@ -85,17 +83,3 @@ class Reservation(models.Model):
         super().clean()
         if Reservation.objects.filter(doctor=self.doctor, date=self.date, start_time__lte=self.end_time, end_time__gte=self.start_time).exists():
             raise ValidationError("Doctor is not available at this time.")
-=======
- #   def clean(self):
- #       super().clean()
-  #      if Reservation.objects.filter(doctor=self.doctor, date=self.date, start_time__lte=self.end_time, end_time__gte=self.start_time).exists():
-   #         raise ValidationError("Doctor is not available at this time.")
-
-class Appointment(models.Model):
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    date = models.DateField()
-    reason = models.TextField()
-    ticket_number = models.IntegerField(null=True, blank=True, validators=[MaxValueValidator(50)])
-
->>>>>>> a529ed177d7b559b9c82ebf418747641a371bc1c

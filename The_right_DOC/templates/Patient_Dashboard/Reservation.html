@@ -12,7 +12,40 @@
 <body>
 
 
-    <div class="container" id = "container"></div>
+    <div class="container" id = "container">
+
+<form class="form1" id="input" method="post" action="{% url 'doctor-profile' doctor.full_name %}" enctype="multipart/form-data">
+
+    {% csrf_token %}
+{% for item in form %}
+    <div class="fieldWrapper {% if forloop.last or forloop.counter0 == form_length_minus_2 %}rightAligned{% endif %}">
+        <label for="{{ item.id_for_label }}"></label>
+        {{ item }}
+        {% if item.errors %}
+            {% for error in item.errors %}
+                {% if item.name == "email" and forloop.first %}
+                    <ul class="errorlist">
+                        <li>{{ error }}</li>
+                    </ul>
+                {% elif item.name == "phone_num" %}
+                    <ul class="errorlist">
+                        <li>{{ error }}</li>
+                    </ul>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% if item.help_text %}
+            <small class="form-text text-muted">{{ item.help_text|safe }}</small>
+        {% endif %}
+    </div>
+    <br>
+{% endfor %}
+
+    <button type="submit" name="sign_up">Save</button>
+</form>
+
+    </div>
+
 
 
 <script>

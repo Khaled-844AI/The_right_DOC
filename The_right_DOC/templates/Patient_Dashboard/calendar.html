@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Calendar</title>
+    <link rel="stylesheet" href="{% static 'calendar.css'%}" />
+
+  </head>
+
+
+
+  <body class="light">
+
+    <div class="container">
+
+      <!--  -->
+      <div class="img-box">
+        <img src="{% static 'img/agenda-photo.png'%}" alt="" class="img" />
+      </div>
+
+      <div class="calendar">
+        <div class="calendar-header">
+          <span class="month-picker" id="month-picker">February</span>
+          <div class="year-picker">
+            <span class="year-change" id="prev-year">
+              <pre><</pre>
+            </span>
+            <span id="year">2021</span>
+            <span class="year-change" id="next-year">
+              <pre>></pre>
+            </span>
+          </div>
+        </div>
+        <div class="calendar-body">
+          <div class="calendar-week-day">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+          </div>
+          <div class="calendar-days"></div>
+            <div id="popup" class="popup">
+                <div class="popup-content">
+                     <button data-close-button class="close-button">&times;</button>
+                     <div id="popup-date">
+                         {{ form }}
+                     </div>
+                </div>
+            </div>
+  <div id="overlay"></div>
+        </div>
+        <!-- <div class="calendar-footer">
+          <div class="toggle">
+            <span>Dark Mode</span>
+            <div class="dark-mode-switch">
+              <div class="dark-mode-switch-ident"></div>
+            </div>
+          </div>
+        </div> -->
+        <div class="month-list"></div>
+      </div>
+        </div>
+    <!-- Popup Container -->
+
+
+    <script src="{% static 'calendar.js'%}"></script>
+
+  </body>
+</html>
