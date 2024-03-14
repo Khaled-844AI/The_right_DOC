@@ -87,54 +87,8 @@ AVAILABLE_TIMES = [
     ('19:00', '19:00')
 ]
 
-VISIT_DUR = [
-    ('10 min', '10 min'),
-    ('20 min', '20 min'),
-    ('30 min', '30 min'),
-    ('40 min', '40 min'),
-    ('50 min', '50 min'),
-    ('60 min', '60 min')
-]
 
 RESERVATION_TIMES = []
-
-
-def generate_reservation_times(doctor):
-    today = datetime.today()  # Get today's date and time
-
-    hour_second_parts1 = [str(doctor.start_w).split(":")[0],
-                         str(doctor.start_w).split(":")[1]]  # Split by " : " and take the first and last elements
-    result1 = ":".join(hour_second_parts1)
-    hour_second_parts2 = [str(doctor.end_w).split(":")[0],
-                         str(doctor.end_w).split(":")[1]]  # Split by " : " and take the first and last elements
-    result2 = ":".join(hour_second_parts2)
-
-    start_time = datetime.strptime(result1, "%H:%M").time()
-    end_time = datetime.strptime(result2, "%H:%M").time()
-    visit_duration_timedelta = timedelta(hours=int(str(doctor.visit_duration).split(':')[1]),
-                                         minutes=int(str(doctor.visit_duration).split(':')[2]))
-
-    current_time = datetime.combine(today.date(), start_time)
-    end_datetime = datetime.combine(today.date(), end_time)
-
-    while current_time <= end_datetime:
-        RESERVATION_TIMES.append(current_time.strftime("%H:%M"))
-        current_time += visit_duration_timedelta
-
-
-
-class ReservationForm(forms.Form):
-
-    start_w = forms.ChoiceField(choices=RESERVATION_TIMES, widget=forms.Select(attrs={
-        'class': 'select',
-        'placeholder': 'available reservations',
-        'required': 'True'
-    }))
-
-    def __init__(self, doctor, *args, **kwargs):
-        super(ReservationForm, self).__init__(*args, **kwargs)
-
-        generate_reservation_times(doctor)
 
 
 class Doctor_timingForm(forms.Form):
@@ -150,11 +104,6 @@ class Doctor_timingForm(forms.Form):
         'required': 'True'
     }))
 
-    visit_dur = forms.ChoiceField(choices=VISIT_DUR, widget=forms.Select(attrs={
-        'class': 'select',
-        'placeholder': 'Select Specialty',
-        'required': 'True'
-    }))
 
     def check_duration(self, request):
         start = self.cleaned_data.get('start_w')
@@ -169,13 +118,17 @@ class Doctor_timingForm(forms.Form):
     def save(self,doctor):
         doctor.start_w = self.start_w
         doctor.end_w = self.end_w
-        doctor.visit_duration = self.visit_dur
         doctor.save()
 
         return doctor
 
 
-
+class Reservation_form(forms.Form):
+    description = forms.CharField(widget=forms.Textarea(attrs={
+        'class': 'popup-date',
+        'placeholder': 'Describe your situation',
+        'required': 'True'
+    }))
 
 
 class Doctor_RegistrationForm(forms.Form):

@@ -29,7 +29,10 @@ class DoctorAdmin(admin.ModelAdmin):
 
 
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ("doctor", "patient", "date", "start_time", "end_time")
+    list_display = ("doctor", "patient", "date", "priority")
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
 
 
 admin.site.register(Reservation, ReservationAdmin)

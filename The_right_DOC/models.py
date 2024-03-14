@@ -17,10 +17,13 @@ class Doctor(models.Model):
     specialty = models.CharField( max_length=20)
     start_w = models.TimeField(default='00:00:00')
     end_w = models.TimeField(default='00:00:00')
-    visit_duration = models.TimeField(default='00:00:00')
     graduation_certificate = models.ImageField(upload_to='files/Certificate')
     password = models.CharField(max_length=100, null=False, default='None')
     accepted = models.BooleanField(default=False)
+    price = models.IntegerField(default=0)
+    max_pat_day = models.IntegerField(default=0)
+    none_work = models.CharField(max_length=10)
+
 
     def save(self, *args, **kwargs):
         # Hash the password before saving
@@ -28,9 +31,9 @@ class Doctor(models.Model):
             self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
-    def check_duration(self,request):
+    def check_duration(self, request):
         if self.start_w >= self.end_w:
-            messages.error(request,"Invalid time: Start time must be before end time.")
+            messages.error(request, "Invalid time: Start time must be before end time.")
             raise ValidationError('Invalid time: Start time must be before end time.')
 
     def __str__(self):
@@ -71,15 +74,22 @@ class OtpToken(models.Model):
 class Reservation(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    date = models.DateField()
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    date = models.CharField(max_length=30, default='None')
+    priority = models.IntegerField(default=1)
 
-    def check_duration(self):
-        if self.start_time >= self.end_time:
-            raise ValidationError('Invalid time: Start time must be before end time.')
+    def set_date(self, date):
+        self.date = date
 
-    def clean(self):
-        super().clean()
-        if Reservation.objects.filter(doctor=self.doctor, date=self.date, start_time__lte=self.end_time, end_time__gte=self.start_time).exists():
-            raise ValidationError("Doctor is not available at this time.")
+    def save(self, *args, **kwargs):
+        if not self.pk:  # If the instance is new
+            if Reservation.objects.filter(doctor=self.doctor, patient=self.patient).exists():
+                raise ValidationError('Maximum reservations reached for today')
+
+            highest_priority = Reservation.objects.filter(doctor=self.doctor).order_by('-priority').first()
+            if highest_priority and highest_priority.priority >= self.doctor.max_pat_day:
+                raise ValidationError('Maximum reservations reached for today no more patients')
+            if highest_priority:
+                self.priority = highest_priority.priority + 1
+            else:
+                self.priority = 1
+        super(Reservation, self).save(*args, **kwargs)

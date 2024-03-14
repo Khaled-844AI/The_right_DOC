@@ -7,14 +7,11 @@ from django.contrib.auth import authenticate, login, get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 
-from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm,ReservationForm
-from The_right_DOC.models import Doctor, Patient, OtpToken, Markers
+from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, Reservation_form
+from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
 
-
-
-AVAILABLE_TIMES = []
 
 def main_page(request):
     return render(request, 'index.html')
@@ -186,10 +183,13 @@ def choose(request):
     return render(request, "patient_or_doc.html")
 
 
-def doctor_profile(request, full_name):
+def doctor_reservation(request, full_name):
     doctor = Doctor.objects.get(full_name=full_name)
-    form = ReservationForm(doctor)
-    return render(request, 'Patient_Dashboard/calendar.html', {"form": form, "doctor": doctor})
+    reservation = Reservation.objects.get(doctor=doctor, patient=request.user)
+    form = Reservation_form()
+    return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
+                                                               "doctor": doctor,
+                                                               "reservation": reservation})
 
 
 @login_required(login_url='/register')

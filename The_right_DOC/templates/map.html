@@ -86,7 +86,7 @@ function filterMarkersBySpecialty(specialty) {
     markers = markersData.filter(marker => specialty === '' || marker.specialty === specialty)
         .map(marker => {
             const fullNameEncoded = encodeURIComponent(marker.fullName);
-            const url = `/doctor-profile/${fullNameEncoded}`;
+            const url = `/doctor-reservation/${fullNameEncoded}`;
 
             const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
                 `<h2>Dr. ${marker.fullName}</h2>` +
