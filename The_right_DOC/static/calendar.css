@@ -287,13 +287,48 @@ body {
   justify-self: start;
 }
 
+@keyframes fadein {from {opacity: 0;} to {opacity: 1;}}
+.messages {
+  position: fixed;
+  top: 20px; /* Adjust the top position as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  border-radius: 2rem;
+  max-width: 500px;
+  animation: fadein 2s;
+  z-index: 1000;
+  padding: 10px;
+  list-style-type: none;
+  margin-bottom: 3rem;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 2rem;
+  margin-bottom: 3rem;
+}
+
+.message.success {
+  background-color: #4caf50;
+  color: #fff;
+  border-radius: 1rem;
+  width: 80%;
+}
+
+
+.message.error {
+    background-color: #f2dede; /* Red background color for error messages */
+    border-color: #ebccd1; /* Red border color for error messages */
+    border-radius: 1rem;
+    width: 80%;
+}
+
 .calendar {
   width: 85%;
   height: 49rem;
   background-color: var(--bg-main);
-
   border-radius: 30px;
-  padding: 2rem;
   position: relative;
   overflow: hidden;
   outline: 2px solid #e8f1f9;

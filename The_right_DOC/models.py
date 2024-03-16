@@ -74,7 +74,8 @@ class OtpToken(models.Model):
 class Reservation(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    date = models.CharField(max_length=30, default='None')
+    date = models.DateField()
+    description = models.CharField(max_length=150 , default='None')
     priority = models.IntegerField(default=1)
 
     def set_date(self, date):
@@ -82,10 +83,10 @@ class Reservation(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:  # If the instance is new
-            if Reservation.objects.filter(doctor=self.doctor, patient=self.patient).exists():
-                raise ValidationError('Maximum reservations reached for today')
+            if Reservation.objects.filter(doctor=self.doctor, patient=self.patient, date=self.date).exists():
+                raise ValidationError('You already did a reservation')
 
-            highest_priority = Reservation.objects.filter(doctor=self.doctor).order_by('-priority').first()
+            highest_priority = Reservation.objects.filter(doctor=self.doctor, date=self.date).order_by('-priority').first()
             if highest_priority and highest_priority.priority >= self.doctor.max_pat_day:
                 raise ValidationError('Maximum reservations reached for today no more patients')
             if highest_priority:
@@ -93,3 +94,4 @@ class Reservation(models.Model):
             else:
                 self.priority = 1
         super(Reservation, self).save(*args, **kwargs)
+

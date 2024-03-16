@@ -65,6 +65,7 @@
                 {% csrf_token %}
                 <input type="email" id="email" name="email2"  placeholder="Email">
                 <input type="password" id="pass1" name="pass2" placeholder="Password">
+                <a href="{% url 'reset_password' %}">Forgot Password?</a>
                 <button name="sign_in">Sign in</button>
             </form>
         </div>

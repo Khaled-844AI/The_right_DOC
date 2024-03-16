@@ -123,7 +123,7 @@ class Doctor_timingForm(forms.Form):
         return doctor
 
 
-class Reservation_form(forms.Form):
+class ReservationForm(forms.Form):
     description = forms.CharField(widget=forms.Textarea(attrs={
         'class': 'popup-date',
         'placeholder': 'Describe your situation',

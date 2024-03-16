@@ -1,13 +1,18 @@
+import json
+
+from bs4 import BeautifulSoup
 from django.contrib.auth.hashers import check_password
 from django.db.models.signals import post_save
+from django.http import JsonResponse
 from django.utils import timezone
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 
-from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, Reservation_form
+from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, ReservationForm
 from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
@@ -183,22 +188,70 @@ def choose(request):
     return render(request, "patient_or_doc.html")
 
 
+
 def doctor_reservation(request, full_name):
-    doctor = Doctor.objects.get(full_name=full_name)
-    reservation = Reservation.objects.get(doctor=doctor, patient=request.user)
-    form = Reservation_form()
+    form = ReservationForm()
+
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                               "doctor": doctor,
-                                                               "reservation": reservation})
+                                                               "full_name": full_name})
 
 
 @login_required(login_url='/register')
 def map(request):
-    markers = Markers.objects.all().values('doctor__full_name', 'doctor__specialty',
+    markers = Markers.objects.all().values('doctor__full_name', 'doctor__specialty', 'doctor__price',
                                            'latitude', 'longitude', 'description')
     # Pass the marker data to the template
     return render(request, 'map.html', {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
 
+
+
+def make_reservation(request ):
+    form = ReservationForm()
+    full_name = request.POST['full_name']
+    if request.method == 'POST':
+        form = ReservationForm(request.POST)
+        if form.is_valid():
+            date = request.POST['reservation_date']  # Assuming your form field name is 'reservation_date'
+
+            description = form.cleaned_data['description']
+            patient = request.user
+            print(full_name + date + description)
+            doctor = Doctor.objects.get(full_name=full_name)
+
+
+            # Check if a reservation already exists for this doctor, patient, and date
+            if Reservation.objects.filter(doctor=doctor, patient=patient, date=date).exists():
+                messages.error(request, f'You already did a reservation with Dr {doctor}')
+                storage = messages.get_messages(request)
+                storage.used = True
+                return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
+                                                                           "full_name": full_name})
+            # Get the highest priority reservation for this doctor and date
+            highest_priority = Reservation.objects.filter(doctor=doctor, date=date).order_by('-priority').first()
+
+            # Check if the maximum reservations per day limit is reached for the doctor
+            if highest_priority and highest_priority.priority >= doctor.max_pat_day:
+                messages.error(request, 'Maximum reservations reached today')
+                storage = messages.get_messages(request)
+                storage.used = True
+                return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
+                                                                           "full_name": full_name})
+
+            # Create a new reservation instance and save it
+            reservation = Reservation(doctor=doctor, patient=patient, date=date, description=description)
+            reservation.save()
+
+            messages.success(request, f'Reservation at {date} been successfully created')
+            storage = messages.get_messages(request)
+            storage.used = True
+            return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
+                                                                       "full_name": full_name})
+        else:
+            messages.error(request, 'Invalid form')
+            storage = messages.get_messages(request)
+            storage.used = True
+    return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
+                                                               "full_name": full_name})
 
 
 

@@ -59,7 +59,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibW91YWRraGFsZWQiLCJhIjoiY2x0NjYxZXh2MGE3NjJrb
 const map = new mapboxgl.Map({
     container: 'map',
     // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-    style: 'mapbox://styles/mapbox/satellite-streets-v11',
+    style: 'mapbox://styles/mapbox/satellite-streets-v12',
     zoom: 12,
     center: [-0.634160,35.192503],
     projection: 'globe'
@@ -71,7 +71,8 @@ let markersData = [
             latitude: '{{ marker.latitude }}',
             longitude: '{{ marker.longitude }}',
             specialty: '{{ marker.doctor__specialty }}',
-            fullName: '{{ marker.doctor__full_name }}'
+            fullName: '{{ marker.doctor__full_name }}',
+            price: '{{ marker.doctor__price }}'
         },
     {% endfor %}
 ];
@@ -90,7 +91,8 @@ function filterMarkersBySpecialty(specialty) {
 
             const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
                 `<h2>Dr. ${marker.fullName}</h2>` +
-                `<b>-Specialty: ${marker.specialty}</b>` +
+                `<b>-Specialty: ${marker.specialty}</b><br>` +
+                `<b>-Price: ${marker.price}DA</b><br>` +
                 `<a href="${url}" class="btn_map btn--fill ">Reserve now</a>`
             );
 

@@ -1,0 +1,108 @@
+
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'register.css' %}"/>
+    <title>Login page</title>
+</head>
+
+<body>
+
+{% block content %}
+
+
+<style>
+    form{
+        height: auto;
+        padding:  10px 50px;
+        box-shadow: rgba(0, 0, 0, 0.35) 5px 15px;
+        margin: 10px auto;
+        text-align: center;
+    }
+    button{
+        width: 250px;
+    }
+
+    form ::placeholder{
+        color: black;
+    }
+    .v_email{
+        margin-top: 10px;
+    }
+       form {
+            max-width: 400px; /* Adjust the maximum width as needed */
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: rgba(0, 0, 0, 0.35) 5px 15px;
+            text-align: center;
+        }
+
+        form input[type="text"],
+        form input[type="email"],
+        form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        form ::placeholder {
+            color: black;
+        }
+
+        .v_email {
+            margin-top: 10px;
+        }
+
+        /* Clearfix for floats inside form */
+        .clearfix::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+</style>
+
+        {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">
+                {{ message|safe }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+ <form action="" method='POST' class="container_verify">
+
+        {% csrf_token %}
+        {{form}}
+        <input type="Submit" name="Update password">
+
+    </form>
+{% endblock content %}
+
+</body>
