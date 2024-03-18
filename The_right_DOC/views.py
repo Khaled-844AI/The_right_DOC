@@ -1,7 +1,7 @@
 import json
 
 from bs4 import BeautifulSoup
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 from django.db.models.signals import post_save
 from django.http import JsonResponse
 from django.utils import timezone
@@ -110,7 +110,6 @@ def register_doctor(request):
                 messages.success(request, "Account created successfully! Please wait for approval.")
                 storage = messages.get_messages(request)
                 storage.used = True
-                return redirect('/register/doctor')
             else:
                 for error in list(form.errors.values()):
                     messages.error(request, error)
@@ -123,7 +122,6 @@ def register_doctor(request):
                 user = Doctor.objects.get(email=email)
                 if check_password(password, user.password):  # Check hashed password
                     if user.accepted:
-                        # Authenticate the doctor and redirect to doctor's page
                         return redirect('/map')
                     else:
                         messages.error(request, "Your account is not yet approved.")
@@ -188,7 +186,7 @@ def choose(request):
     return render(request, "patient_or_doc.html")
 
 
-
+@login_required(login_url='/register')
 def doctor_reservation(request, full_name):
     form = ReservationForm()
 
@@ -204,8 +202,8 @@ def map(request):
     return render(request, 'map.html', {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
 
 
-
-def make_reservation(request ):
+@login_required(login_url='/register')
+def make_reservation(request):
     form = ReservationForm()
     full_name = request.POST['full_name']
     if request.method == 'POST':

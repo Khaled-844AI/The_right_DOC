@@ -18,10 +18,59 @@
       nomodule
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
     ></script>
+          <style>
+
+        .inner-container {
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+        }
+
+        .calendar, .reservation-container {
+            backface-visibility: hidden;
+        }
+
+        .reservation-container {
+            transform: rotateY(-180deg);
+        }
+        .show-reservation {
+            transform: rotateY(180deg);
+        }
+
+.reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reservation-table th,
+.reservation-table td {
+    padding: 10px;
+    border-bottom: 1px solid #100909;
+    text-align: left;
+}
+
+.reservation-table th {
+    background-color: #f8f4f4;
+}
+
+.reservation-table tbody tr:nth-child(even) {
+    background-color: #faf4f4;
+}
+
+.reservation-table tbody tr:hover {
+    background-color: #f5f1f1;
+}
+
+.reservation-table td:last-child {
+    text-transform: capitalize; /* Capitalize status text */
+}
+
+
+    </style>
   </head>
 
 
 <body class="light">
+
 {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -32,10 +81,12 @@
     </ul>
 {% endif %}
     <div class="container">
+
       <div class="side-bar">
+
         <ul class="side-bar-list">
           <li class="list-elt">
-            <a href="#"
+            <a href="#" id="calendar-button"
               >Calendar
               <div class="icon-container">
                 <ion-icon name="calendar-clear-outline" class="icon"></ion-icon>
@@ -43,17 +94,18 @@
             </a>
           </li>
           <li class="list-elt">
-            <a href="#"
-              >Reservation
-              <div class="icon-container">
-                <ion-icon name="pencil-outline" class="icon"></ion-icon>
-              </div>
-            </a>
-          </li>
+  <a href="#" id="reservation-button">Reservation
+    <div class="icon-container">
+      <ion-icon name="pencil-outline" class="icon"></ion-icon>
+    </div>
+  </a>
+</li>
+
           <li class="list-elt push"><a href="#">Logout</a></li>
         </ul>
       </div>
       <div class="inner-container">
+
         <!--  -->
         <div class="img-box">
           <img src="{% static 'img/agenda-photo.png'%}" alt="" class="img" />
@@ -93,7 +145,16 @@
           </div>
         </div> -->
           <div class="month-list"></div>
-            <div id="popup" class="popup">
+
+
+        </div>
+
+
+
+      </div>
+
+          <div id="overlay"></div>
+                    <div id="popup" class="popup">
                 <div class="popup-content">
 
                      <button data-close-button class="close-button">&times;</button>
@@ -118,13 +179,17 @@
 </form>
                 </div>
             </div>
-  <div id="overlay"></div>
-        </div>
-      </div>
+
+      <div class="reservation-container">
+
+</div>
+
     </div>
 
-    <script>
 
+    <script>
+    const reservationButton = document.getElementById('reservation-button');
+    const calendarButton = document.getElementById('calendar-button');
     let calendar = document.querySelector(".calendar");
     const closeModalButtons = document.querySelectorAll('[data-close-button]')
     const overlay = document.getElementById('overlay')
@@ -287,6 +352,66 @@
       ++curr_year.value;
       generateCalendar(curr_month.value, curr_year.value);
     };
+
+    const innerContainer = document.querySelector('.inner-container');
+
+reservationButton.addEventListener('click', function (event) {
+    event.preventDefault();
+    innerContainer.classList.toggle('show-reservation');
+
+    // Check if the reservation container is now visible
+    const isReservationVisible = innerContainer.classList.contains('show-reservation');
+
+    // If the reservation container is visible, generate and display the reservations table
+    if (isReservationVisible) {
+        const reservations = [
+            { date: '2024-03-20', time: '10:00 AM', doctor: 'Dr. Smith', status: 'Confirmed' },
+            { date: '2024-03-25', time: '2:30 PM', doctor: 'Dr. Johnson', status: 'Pending' },
+            // Add more reservation data as needed
+        ];
+
+        const reservationTable = document.createElement('table');
+        reservationTable.classList.add('reservation-table');
+
+        const tableHead = reservationTable.createTHead();
+        const headerRow = tableHead.insertRow();
+        ['Date', 'Time', 'Doctor', 'Status'].forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            headerRow.appendChild(th);
+        });
+
+        const tableBody = reservationTable.createTBody();
+        reservations.forEach(reservation => {
+            const row = tableBody.insertRow();
+            ['date', 'time', 'doctor', 'status'].forEach(property => {
+                const cell = row.insertCell();
+                cell.textContent = reservation[property];
+            });
+        });
+
+        // Remove any existing reservations table before appending the new one
+        const existingTable = document.querySelector('.reservation-container table');
+        if (existingTable) {
+            existingTable.remove();
+        }
+            const reservationContainer = document.querySelector('.inner-container');
+        // Append the new reservations table to the reservation container
+        reservationContainer.insertBefore(reservationTable, reservationContainer.firstChild);
+    } else {
+        // If the reservation container is hidden, remove any existing reservations table
+        const existingTable = document.querySelector('.reservation-container table');
+        if (existingTable) {
+            existingTable.remove();
+        }
+    }
+});
+
+
+    calendarButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        innerContainer.classList.toggle('show-reservation');
+    });
 
 
     </script>

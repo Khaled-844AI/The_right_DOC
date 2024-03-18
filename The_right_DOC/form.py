@@ -168,7 +168,6 @@ class Doctor_RegistrationForm(forms.Form):
         'required': 'True'
     }))
 
-
     def clean_password2(self):
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")
@@ -190,13 +189,14 @@ class Doctor_RegistrationForm(forms.Form):
         return full_name
 
     def save(self, commit=True):
+        print(self.cleaned_data['password1'])
         doctor = Doctor(
             full_name=self.cleaned_data['full_name'],
             email=self.cleaned_data['email'],
             office_location=self.cleaned_data['office_location'],
             specialty=self.cleaned_data['specialty'],
             graduation_certificate=self.cleaned_data['graduation_certificate'],
-            password=make_password(password=self.cleaned_data['password1']),
+            password=make_password(self.cleaned_data['password1'])
         )
         if commit:
             doctor.save()

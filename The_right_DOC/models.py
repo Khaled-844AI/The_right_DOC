@@ -18,18 +18,11 @@ class Doctor(models.Model):
     start_w = models.TimeField(default='00:00:00')
     end_w = models.TimeField(default='00:00:00')
     graduation_certificate = models.ImageField(upload_to='files/Certificate')
-    password = models.CharField(max_length=100, null=False, default='None')
+    password = models.CharField(max_length=120, null=False, default='None')
     accepted = models.BooleanField(default=False)
     price = models.IntegerField(default=0)
     max_pat_day = models.IntegerField(default=0)
     none_work = models.CharField(max_length=10)
-
-
-    def save(self, *args, **kwargs):
-        # Hash the password before saving
-        if self.password != 'None':  # Only hash if a password is provided
-            self.password = make_password(self.password)
-        super().save(*args, **kwargs)
 
     def check_duration(self, request):
         if self.start_w >= self.end_w:
