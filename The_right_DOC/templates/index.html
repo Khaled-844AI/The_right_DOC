@@ -25,9 +25,27 @@
   </head>
   <body>
     <header class="header">
+<nav class="nav-bar">
+  <a class="logo-container">
+    <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
+  </a>
+  <form action="" class="search-bar">
+    <input
+      id="search-bar"
+      type="text"
+      placeholder="Search"
+      name="search-bar"
+    />
+    <button type="submit" class="search-btn">
+      <img src="{% static 'img/search-icon.png'%}" class="search-img" />
+    </button>
+  </form>
+  <div class="flex-align">
+    <a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a>
+      <a href="{% url 'register-patient'%}" class="register nav-button">Sign in</a>
+  </div>
 
-{% include 'nav_bar/nav_bar.html' %}
-
+</nav>
     </header>
 
     <main>

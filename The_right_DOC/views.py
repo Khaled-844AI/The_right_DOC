@@ -122,7 +122,7 @@ def register_doctor(request):
                 user = Doctor.objects.get(email=email)
                 if check_password(password, user.password):  # Check hashed password
                     if user.accepted:
-                        return redirect('/map')
+                        return redirect('/doctor-profile/'+user.full_name)
                     else:
                         messages.error(request, "Your account is not yet approved.")
                         storage = messages.get_messages(request)
@@ -253,6 +253,8 @@ def make_reservation(request):
 
 
 
+def doctor_profile(request , full_name):
+    return render(request , "Doctor_Dashboard/Doctor_prof.html", {'full_name':full_name})
 
 
 

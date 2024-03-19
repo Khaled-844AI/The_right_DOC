@@ -1,10 +1,10 @@
 {% load static %}
 <nav class="nav-bar">
-  <a href="{% url 'main-page' %}" class="logo-container">
+  <a class="logo-container">
     <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
   </a>
   <form action="" class="search-bar">
-      <label for="search-bar"></label><input
+    <input
       id="search-bar"
       type="text"
       placeholder="Search"
@@ -14,9 +14,5 @@
       <img src="{% static 'img/search-icon.png'%}" class="search-img" />
     </button>
   </form>
-  <div class="flex-align">
-    <a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a>
-      <a href="{% url 'register-patient'%}" class="register nav-button">Sign in</a>
-  </div>
 
 </nav>

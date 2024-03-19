@@ -353,66 +353,6 @@
       generateCalendar(curr_month.value, curr_year.value);
     };
 
-    const innerContainer = document.querySelector('.inner-container');
-
-reservationButton.addEventListener('click', function (event) {
-    event.preventDefault();
-    innerContainer.classList.toggle('show-reservation');
-
-    // Check if the reservation container is now visible
-    const isReservationVisible = innerContainer.classList.contains('show-reservation');
-
-    // If the reservation container is visible, generate and display the reservations table
-    if (isReservationVisible) {
-        const reservations = [
-            { date: '2024-03-20', time: '10:00 AM', doctor: 'Dr. Smith', status: 'Confirmed' },
-            { date: '2024-03-25', time: '2:30 PM', doctor: 'Dr. Johnson', status: 'Pending' },
-            // Add more reservation data as needed
-        ];
-
-        const reservationTable = document.createElement('table');
-        reservationTable.classList.add('reservation-table');
-
-        const tableHead = reservationTable.createTHead();
-        const headerRow = tableHead.insertRow();
-        ['Date', 'Time', 'Doctor', 'Status'].forEach(headerText => {
-            const th = document.createElement('th');
-            th.textContent = headerText;
-            headerRow.appendChild(th);
-        });
-
-        const tableBody = reservationTable.createTBody();
-        reservations.forEach(reservation => {
-            const row = tableBody.insertRow();
-            ['date', 'time', 'doctor', 'status'].forEach(property => {
-                const cell = row.insertCell();
-                cell.textContent = reservation[property];
-            });
-        });
-
-        // Remove any existing reservations table before appending the new one
-        const existingTable = document.querySelector('.reservation-container table');
-        if (existingTable) {
-            existingTable.remove();
-        }
-            const reservationContainer = document.querySelector('.inner-container');
-        // Append the new reservations table to the reservation container
-        reservationContainer.insertBefore(reservationTable, reservationContainer.firstChild);
-    } else {
-        // If the reservation container is hidden, remove any existing reservations table
-        const existingTable = document.querySelector('.reservation-container table');
-        if (existingTable) {
-            existingTable.remove();
-        }
-    }
-});
-
-
-    calendarButton.addEventListener('click', function (event) {
-        event.preventDefault();
-        innerContainer.classList.toggle('show-reservation');
-    });
-
 
     </script>
   </body>
