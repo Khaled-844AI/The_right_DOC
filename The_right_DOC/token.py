@@ -1,15 +1,14 @@
 from django.db.models.signals import post_save
+from django.conf import settings
 from django.dispatch import receiver
-from .models import OtpToken, Patient
+from .models import OtpToken
 from django.core.mail import send_mail
 from django.utils import timezone
 
 
-@receiver(post_save, sender=Patient)
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_token(sender, instance, created, **kwargs):
-    print(';nanananananana')
     if created:
-
         if instance.is_superuser:
             pass
 

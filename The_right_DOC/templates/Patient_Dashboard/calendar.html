@@ -10,8 +10,6 @@
     />
     <title>Calendar</title>
     <link rel="stylesheet" href="{% static 'calendar.css'%}" />
-      <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
-
     <script
       type="module"
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -66,40 +64,12 @@
     text-transform: capitalize; /* Capitalize status text */
 }
 
-.non_work{
-    background: #f18080;
-    border-radius: 3rem;
-}
-.map {
-    height: 5rem;
-    width: 5rem;
-    position: absolute;
-    top: 2rem;
-    left: 2rem;
-    border-radius: 50%; /* Make it a circle */
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s;
-    background-color: #f8fcf5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.custom-icon {
-    width: 3rem;
-    height: 3rem;
-    display: inline-block;
-    background-image: url("{% static 'img/img_1.png' %}");
-    background-size: cover;
-}
     </style>
   </head>
 
 
 <body class="light">
-
-
 
 {% if messages %}
     <ul class="messages">
@@ -110,16 +80,8 @@
         {% endfor %}
     </ul>
 {% endif %}
-
-
     <div class="container">
-      <div class="map">
-        <a href="{% url 'map' %}">
-            <ion-icon src="{% static 'img/img_1.png' %}" class="custom-icon"></ion-icon>
 
-        </a>
-
-    </div>
       <div class="side-bar">
 
         <ul class="side-bar-list">
@@ -132,7 +94,7 @@
             </a>
           </li>
           <li class="list-elt">
-  <a href="{% url 'chk-reservations' %}" id="reservation-button">Reservation
+  <a href="#" id="reservation-button">Reservation
     <div class="icon-container">
       <ion-icon name="pencil-outline" class="icon"></ion-icon>
     </div>
@@ -223,33 +185,8 @@
 </div>
 
     </div>
-    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
-    <script >
-      const intro = introJs()
-
-introJs().setOptions({
-    steps : [
-
-        {
-            element : '#step-one',
-            intro : 'Please read this'
-        },
-        {
-          element : document.querySelector('.popup-content'),
-          intro : 'write heeere',
-        }
-    ],
-    ShowProgress : true,
-    ShowBulets : true,
-    disableInteraction : false,
-
-}).start();
-introJs().addHints();
 
 
-
-
-    </script>
     <script>
     const reservationButton = document.getElementById('reservation-button');
     const calendarButton = document.getElementById('calendar-button');
@@ -341,8 +278,6 @@ introJs().addHints();
         31,
       ];
 
-      const non_w = '{{ non_work }}'
-
       calendar_days.innerHTML = "";
 
       let currDate = new Date();
@@ -364,25 +299,17 @@ introJs().addHints();
           day.classList.add("calendar-day-hover");
           day.innerHTML = i - first_day.getDay() + 1;
 
-          if (i >= today.getDate() && (i - first_day.getDay() + 1) >= today.getDate() && !non_w.split(',').includes(getDayName(i))){
+          if (i >= today.getDate() && (i - first_day.getDay() + 1) >= today.getDate()) {
               day.addEventListener("click", (event) => {
                   const popup = document.querySelector('.popup')
                   show_popup(popup, `${year}-${month + 1}-${i - first_day.getDay() + 1}`);
               });
-          }
-          if (non_w.split(',').includes(getDayName(i))) {
-                  day.classList.add("non_work");
           }
         } else {
           day.classList.add("empty-day");
         }
         calendar_days.appendChild(day);
       }
-    };
-
-    const getDayName = (index) => {
-       const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-       return daysOfWeek[index % 7];
     };
 
     let month_list = calendar.querySelector(".month-list");

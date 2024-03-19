@@ -21,7 +21,7 @@
 <body>
 
 
-    <div class="container active" id = "container">
+    <div class="container" id = "container">
             
         <div class="form-container sign-up">
     <form class = "form1" id="input" method="post" action="{% url 'register-doctor' %}" enctype="multipart/form-data">
@@ -60,6 +60,15 @@
 
 </div>
 
+        <div class="form-container sign-in">
+            <form class = "form2" method="post" action="{% url 'register-doctor' %}">
+                <h1>Doctor</h1>
+                {% csrf_token %}
+                <input type="email" id="email" name="email"  placeholder="Email">
+                <input type="password" id="pass1" name="pass1" placeholder="Password">
+                <button name="sign_in">Sign in</button>
+            </form>
+        </div>
 
         <div class="toggle-container">
             <div class="toggle">
@@ -68,10 +77,22 @@
                         Welcome Doc
                     </h1>
                     <p>Enter the necessary informations to be a Doctor on the platform</p>
-
-                    <a href="{% url 'login'%}" class="log-in nav-button">Sign in</a>
+                    
+                    <button class="hidden" id="login">
+                        Sign in
+                    </button>
                 </div>
 
+                <div class="toggle-panel toggle-right">
+                    <h1>
+                        Not yet ?
+                    </h1>
+                    <p>Be the doctor who helps patients and achieve the best with us !</p>
+                    
+                    <button class="hidden" id="register">
+                        Sign up
+                    </button>
+                </div>
             </div>
         </div>
 

@@ -9,6 +9,9 @@
     <title>Login page</title>
 </head>
 
+
+<body>
+
 {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -19,10 +22,8 @@
     </ul>
 {% endif %}
 
-<body>
 
-
-    <div class="container active" id = "container">
+    <div class="container" id = "container">
 
         <div class="form-container sign-up">
     <form class = "form1" id="input" method="post" action="{% url 'register-patient' %}" enctype="multipart/form-data">
@@ -58,6 +59,17 @@
 
 </div>
 
+        <div class="form-container sign-in">
+            <form class = "form2" method="post" action="{% url 'register-patient' %}">
+                <h1>Patient</h1>
+                {% csrf_token %}
+                <input type="email" id="email" name="email2"  placeholder="Email">
+                <input type="password" id="pass1" name="pass2" placeholder="Password">
+                <a href="{% url 'reset_password' %}">Forgot Password?</a>
+                <button name="sign_in">Sign in</button>
+            </form>
+        </div>
+
         <div class="toggle-container">
             <div class="toggle">
                 <div class="toggle-panel toggle-left">
@@ -66,14 +78,26 @@
                     </h1>
                     <p>Enter the necessary informations to get your reservation with right doctor on the platform</p>
 
-                    <a href="{% url 'login'%}" class="log-in nav-button">Sign in</a>
+                    <button class="hidden" id="login">
+                        Sign in
+                    </button>
                 </div>
 
+                <div class="toggle-panel toggle-right">
+                    <h1>
+                        Not yet ?
+                    </h1>
+                    <p>Save your time and money and find the right doctor</p>
+
+                    <button class="hidden" id="register">
+                        Sign up
+                    </button>
+                </div>
             </div>
         </div>
 
     </div>
 
-
+    <script src = "{% static 'script.js' %}"></script>
 </body>
 </html>

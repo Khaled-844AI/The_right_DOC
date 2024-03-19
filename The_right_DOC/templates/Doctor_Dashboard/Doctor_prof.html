@@ -125,20 +125,10 @@
   </style>
 </head>
 
-{% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li class="message {{ message.tags }}">
-                {{ message|safe }}
-            </li>
-        {% endfor %}
-    </ul>
-{% endif %}
 <body class="light">
   <div class="container">
     <div class="side-bar">
       <ul class="side-bar-list">
-      
         <li class="list-elt">
           <a href="#" id="calendar-button">
             Profile
@@ -148,61 +138,44 @@
           </a>
         </li>
         <li class="list-elt">
-          <a href="{% url "manage" %}" id="reservation-button">
+          <a href="#" id="reservation-button">
             Reservations
             <div class="icon-container">
               <ion-icon name="pencil-outline" class="icon"></ion-icon>
             </div>
           </a>
         </li>
-        <li class="list-elt push"><a href="{% url 'logout' %}">Logout</a></li>
+        <li class="list-elt push"><a href="#">Logout</a></li>
       </ul>
     </div>
     <div class="inner-container">
       <!-- Profile Section -->
 
         <div class="profile-info">
-          <h1>Dr. {{ doctor.username }}</h1>
+          <h1>John Doe</h1>
           <br>
-          <p>Email: {{ doctor.email }}</p>
+          <p>Email: johndoe@example.com</p>
           <br>
-          <p>Location: {{ doctor.office_location }}</p>
+          <p>Location: New York, USA</p>
           <br>
-          <p>specialty: {{ doctor.specialty }}</p>
-
+          <p>Interests: Web Development, Photography</p>
         </div>
-
-        	<form class="profile-form" method="POST" action="">
-            {% csrf_token %}
+        <br>
+        <form>
           <label>Start work</label>
-          <input type="time" placeholder="start work" name="start_w" required>
+          <input type="time" placeholder="start work">
           <label>End work</label>
-          <input type="time" placeholder="end work" name="end_w" required>
-          <input type="number" placeholder="max patients" name="max_pat_day" required>
-          <label>Rest days :</label><br><br>
-    <input type="checkbox" name="none_work[]" value="Sunday"> Sunday<br>
-    <input type="checkbox" name="none_work[]" value="Monday"> Monday<br>
-    <input type="checkbox" name="none_work[]" value="Tuesday"> Tuesday<br>
-    <input type="checkbox" name="none_work[]" value="Wednesday"> Wednesday<br>
-    <input type="checkbox" name="none_work[]" value="Thursday"> Thursday<br>
-    <input type="checkbox" name="none_work[]" value="Friday"> Friday<br>
-    <input type="checkbox" name="none_work[]" value="Saturday"> Saturday<br>
-    <input type="hidden" id="rest_days" name="rest_days">
+          <input type="time" placeholder="end work">
+          <input type="number" placeholder="max patients">
+          <input type="day" placeholder="rest days">
+          <input type="hidden" value="{{ full_name }}">
           <button type="submit">Save</button>
         </form>
+        
+
       <!-- End Profile Section -->
     </div>
   </div>
-  <script>
-function submitForm() {
-    var restDays = document.querySelectorAll('input[name="none_work[]"]:checked');
-    var selectedDays = [];
-    restDays.forEach(function(day) {
-        selectedDays.push(day.value);
-    });
-    document.getElementById("rest_days").value = selectedDays.join(',');
-    document.querySelector('form').submit();
-}
-</script>
+  <script></script>
 </body>
 </html>

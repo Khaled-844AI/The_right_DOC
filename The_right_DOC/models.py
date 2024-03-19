@@ -9,18 +9,9 @@ from django.contrib import messages
 from django.db import models
 from django.contrib import messages
 
-from djangoProject3.settings import AUTH_USER_MODEL
-
-
-class User(AbstractUser):
-    email = models.EmailField(unique=True)
-    is_patient = models.BooleanField(default=False)
-    is_doctor = models.BooleanField(default=False)
-
 
 class Doctor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='doctor')
-    username = models.CharField(unique=True, max_length=50)
+    full_name = models.CharField(unique=True, max_length=50)
     email = models.EmailField(unique=True)
     office_location = models.CharField(max_length=50)
     specialty = models.CharField( max_length=20)
@@ -39,7 +30,7 @@ class Doctor(models.Model):
             raise ValidationError('Invalid time: Start time must be before end time.')
 
     def __str__(self):
-        return self.username
+        return self.full_name
 
 
 class Markers(models.Model):
@@ -52,8 +43,7 @@ class Markers(models.Model):
         return f"Marker - Lat: {self.latitude}, Long: {self.longitude} \n -Description: {self.description}"
 
 
-class Patient(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name='patient')
+class Patient(AbstractUser):
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
 
@@ -61,11 +51,11 @@ class Patient(models.Model):
     REQUIRED_FIELDS = ["username", "password"]
 
     def __str__(self):
-        return self.user.username
+        return self.username
 
 
 class OtpToken(models.Model):
-    user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="otps")
+    user = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name="otps")
     otp_code = models.CharField(max_length=6, default=secrets.token_hex(3))
     tp_created_at = models.DateTimeField(auto_now_add=True)
     otp_expires_at = models.DateTimeField(blank=True, null=True)

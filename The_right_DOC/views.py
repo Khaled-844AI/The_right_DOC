@@ -1,21 +1,19 @@
 import json
 
+from bs4 import BeautifulSoup
 from django.contrib.auth.hashers import check_password, make_password
-from django.db.models import Q
-from django.http import HttpResponse
-from django.urls import reverse, reverse_lazy
-
+from django.db.models.signals import post_save
+from django.http import JsonResponse
 from django.utils import timezone
-from django.contrib.auth import views as auth_views, logout
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView
+from django.views.decorators.csrf import csrf_exempt
 
-from The_right_DOC.decorators import patient_required, doctor_required
-from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, ReservationForm, LoginForm
-from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User
+from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, ReservationForm
+from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
 
@@ -36,13 +34,9 @@ def verify_email(request, username):
             # checking for expired token
             if user_otp.otp_expires_at > timezone.now():
                 user.is_active = True
-
-                user = User.objects.get(email=user.email)
-                user.is_active = True
-                user.save()
                 user.save()
                 messages.success(request, "Account activated successfully!! You can Login.")
-                return redirect("login")
+                return redirect("register-patient")
 
             # expired token
             else:
@@ -106,151 +100,122 @@ def resend_otp(request):
     return render(request, "resend_otp.html", context)
 
 
-class PatientSignUpView(CreateView):
-    model = User
-    form_class = Patient_RegistrationForm
-    template_name = 'Patient_R.html'
-    success_url = reverse_lazy('main-page')
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect(self.success_url)
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'patient'
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        user = form.save(self.request)
-        messages.success(self.request, f"You account has been successfully created please check {user.email}")
-        storage = messages.get_messages(self.request)
-        storage.used = True
-        login(self.request, user)
-        return redirect('login')
-
-
-class DoctorSignUpView(CreateView):
-    model = User
-    form_class = Doctor_RegistrationForm
-    template_name = 'Doctor_R.html'
-    success_url = reverse_lazy('main-page')
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect(self.success_url)
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'doctor'
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        user = form.save()
-        messages.success(self.request, f"You account has been successfully created please check {user.email}"
-                                       f"and wait for approval")
-        storage = messages.get_messages(self.request)
-        storage.used = True
-        return redirect('login')
-
-
-class LoginView(auth_views.LoginView):
-    form_class = LoginForm
-    template_name = 'Signin.html'
-    success_url = reverse_lazy('main-page')
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect(self.success_url)
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
-
-    def get_success_url(self):
-        user = self.request.user
-        if user.is_superuser:
-            user.is_patient = True
-        if user.is_authenticated:
-            if user.is_patient:
-                return reverse('map')
-            elif user.is_doctor:
-                doctor = Doctor.objects.get(username=user.username)
-                if not doctor.accepted:
-                    messages.error(self.request, f"Account not approved yet wait for approval")
-                    storage = messages.get_messages(self.request)
+def register_doctor(request):
+    if request.method == 'POST':
+        if 'sign_up' in request.POST:
+            form = Doctor_RegistrationForm(request.POST, request.FILES)
+            if form.is_valid():
+                # Handle form submission and save the doctor registration
+                form.save()
+                messages.success(request, "Account created successfully! Please wait for approval.")
+                storage = messages.get_messages(request)
+                storage.used = True
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+                    storage = messages.get_messages(request)
                     storage.used = True
-                    return reverse('login')
+        elif 'sign_in' in request.POST:
+            email = request.POST.get('email')
+            password = request.POST.get('pass1')  # Adjust this according to your form field name
+            try:
+                user = Doctor.objects.get(email=email)
+                if check_password(password, user.password):  # Check hashed password
+                    if user.accepted:
+                        return redirect('/doctor-profile/'+user.full_name, {'full_name': user.full_name})
+                    else:
+                        messages.error(request, "Your account is not yet approved.")
+                        storage = messages.get_messages(request)
+                        storage.used = True
                 else:
-                    print('doctor')
-                    return reverse('doctor-profile', kwargs={'pk': user.username})
-        return reverse('login')
+                    messages.error(request, "Invalid credentials.")
+                    storage = messages.get_messages(request)
+                    storage.used = True
+            except Doctor.DoesNotExist:
+                messages.error(request, "Invalid credentials.")
 
-    def form_invalid(self, form):
-        # Add a message for invalid login (incorrect username or password)
-        messages.error(self.request, 'Invalid username or password. Please try again.')
-        return super().form_invalid(form)
+    form = Doctor_RegistrationForm()
+    print("Rendering signup form.")
 
-
-def anonymous_required(view_function):
-    def wrapped(request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('main-page')
-        return view_function(request, *args, **kwargs)
-
-    return wrapped
+    return render(
+        request=request,
+        template_name="Doctor_R.html",
+        context={"form": form}
+    )
 
 
-@anonymous_required
+def register_patient(request):
+    if request.method == 'POST':
+        if 'sign_up' in request.POST:
+            form = Patient_RegistrationForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                print("Form saved successfully.")
+                messages.success(request, f'Hy {user.username}, your account has been created successfully.\
+                    \nPlease check your email at {user.email} for verification instructions.')
+                return redirect('verify-email', username=request.POST['username'])
+            else:
+                for error in list(form.errors.values()):
+                    messages.error(request, error)
+                    storage = messages.get_messages(request)
+                    storage.used = True
+        elif 'sign_in' in request.POST:
+            email = request.POST.get('email2')
+            password = request.POST.get('pass2')
+            user = authenticate(request, email=email, password=password)
+            if user is not None and user.is_active:
+                login(request, user)
+                messages.success(request, "Logged In Successfully!!")
+                return redirect('/map')
+            else:
+                messages.error(request, "Bad Credentials!!")
+                storage = messages.get_messages(request)
+                storage.used = True
+
+    form = Patient_RegistrationForm()
+    print("Rendering signup form.")
+
+    return render(
+        request=request,
+        template_name="Patient_R.html",
+        context={"form": form}
+    )
+
+
 def choose(request):
     return render(request, "patient_or_doc.html")
 
 
-@patient_required(login_url='/login')
+@login_required(login_url='/register')
 def doctor_reservation(request, full_name):
     form = ReservationForm()
-    doctor = Doctor.objects.get(username=full_name)
+
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                               "full_name": full_name,
-                                                               "non_work": doctor.none_work})
+                                                               "full_name": full_name})
 
 
-@login_required(login_url='login')
+@login_required(login_url='/register')
 def map(request):
-    markers = Markers.objects.all().values('doctor__username', 'doctor__specialty', 'doctor__price', 'doctor__start_w',
-                                           'doctor__end_w', 'latitude', 'longitude', 'description')
-
-    user = request.user
-
-    return render(request, 'map.html',
-                  {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES],
-                   'user': user})
+    markers = Markers.objects.all().values('doctor__full_name', 'doctor__specialty', 'doctor__price',
+                                           'latitude', 'longitude', 'description')
+    # Pass the marker data to the template
+    return render(request, 'map.html', {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
 
 
-@patient_required(login_url='login')
+@login_required(login_url='/register')
 def make_reservation(request):
     form = ReservationForm()
     full_name = request.POST['full_name']
-    doctor = Doctor.objects.get(username=full_name)
     if request.method == 'POST':
         form = ReservationForm(request.POST)
         if form.is_valid():
             date = request.POST['reservation_date']  # Assuming your form field name is 'reservation_date'
 
             description = form.cleaned_data['description']
-            patient = Patient.objects.get(user=request.user)
+            patient = request.user
             print(full_name + date + description)
+            doctor = Doctor.objects.get(full_name=full_name)
 
-            time = timezone.now().time()
-            doc_end_time = doctor.end_w
-
-            if time > doc_end_time:
-                messages.error(request, f'reservations with Dr {doctor} are done today')
-                storage = messages.get_messages(request)
-                storage.used = True
-                return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                                           "full_name": full_name,
-                                                                           "non_work": doctor.none_work})
 
             # Check if a reservation already exists for this doctor, patient, and date
             if Reservation.objects.filter(doctor=doctor, patient=patient, date=date).exists():
@@ -258,8 +223,7 @@ def make_reservation(request):
                 storage = messages.get_messages(request)
                 storage.used = True
                 return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                                           "full_name": full_name,
-                                                                           "non_work": doctor.none_work})
+                                                                           "full_name": full_name})
             # Get the highest priority reservation for this doctor and date
             highest_priority = Reservation.objects.filter(doctor=doctor, date=date).order_by('-priority').first()
 
@@ -269,8 +233,7 @@ def make_reservation(request):
                 storage = messages.get_messages(request)
                 storage.used = True
                 return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                                           "full_name": full_name,
-                                                                           "non_work": doctor.none_work})
+                                                                           "full_name": full_name})
 
             # Create a new reservation instance and save it
             reservation = Reservation(doctor=doctor, patient=patient, date=date, description=description)
@@ -280,78 +243,19 @@ def make_reservation(request):
             storage = messages.get_messages(request)
             storage.used = True
             return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                                       "full_name": full_name,
-                                                                       "non_work": doctor.none_work})
+                                                                       "full_name": full_name})
         else:
             messages.error(request, 'Invalid form')
             storage = messages.get_messages(request)
             storage.used = True
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                               "full_name": full_name,
-                                                               "non_work": doctor.none_work})
+                                                               "full_name": full_name})
 
 
-@doctor_required(login_url='login')
-def doctor_profile(request, pk):
-    doctor = Doctor.objects.get(username=pk)
-    print(request.user.username)
 
-    if request.user.username == doctor.username:
-        if request.method == 'POST':
-            start_w = request.POST.get('start_w')
-            end_w = request.POST.get('end_w')
-            max_pat_day = request.POST.get('max_pat_day')
-            none_work = request.POST.getlist('none_work[]')
-            price = request.POST.get('price')
-            print(price)
-
-            doctor.start_w = start_w
-            doctor.end_w = end_w
-            doctor.max_pat_day = max_pat_day
-            doctor.none_work = ",".join(none_work)
-            doctor.price = price
-            doctor.save()
-            messages.success(request, 'Your information has been successfully updated.')
-            return redirect('doctor-profile', pk=pk)
-
-    context = {'doctor': doctor}
-    return render(request, "Doctor_Dashboard/Doctor_prof.html", context)
+def doctor_profile(request , full_name):
+    return render(request , "Doctor_Dashboard/Doctor_prof.html", {'full_name':full_name})
 
 
-def logoutUser(request):
-    logout(request)
-    return redirect('main-page')
 
 
-def docListView(request):
-    q = request.GET.get('q') if request.GET.get('q') != None else ''
-
-    doctors = Doctor.objects.filter(
-        Q(username__icontains=q) | Q(office_location__icontains=q) | Q(specialty__icontains=q)
-    )
-    doctors_count = doctors.count()
-    context = {'doctors': doctors, 'doctors_count': doctors_count}
-    return render(request, 'doc_list.html', context)
-
-
-@patient_required(login_url='login')
-def check_reservations(request):
-    patient = Patient.objects.get(user=request.user)
-    current_date = timezone.now().date()  # Get the current date
-    print(current_date)
-    # Filter reservations for today and the future
-    reservations = Reservation.objects.filter(patient=patient, date__gte=current_date)
-
-    return render(request, 'Patient_Dashboard/Reservation.html', {'reservations': reservations})
-
-
-@patient_required(login_url='login')
-def cancel_reservations(request, reservation_id):
-    if request.method == 'POST':
-        try:
-            reservation = Reservation.objects.get(id=reservation_id)
-            reservation.delete()
-            messages.success(request, 'Reservation canceled successfully.')
-        except Reservation.DoesNotExist:
-            messages.error(request, 'Reservation not found.')
-    return redirect('/my-reservations')  # Redirect to the reservation page

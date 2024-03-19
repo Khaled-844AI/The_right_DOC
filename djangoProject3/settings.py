@@ -82,9 +82,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'The_right_DOC.User'
-LOGIN_REDIRECT_URL = 'map'
-LOGIN_URL = 'register'
+AUTH_USER_MODEL = 'The_right_DOC.Patient'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'

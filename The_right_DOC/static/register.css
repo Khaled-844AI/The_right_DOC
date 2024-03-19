@@ -95,6 +95,7 @@ body{
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    margin-top: 10px;
     width: 50%;
     cursor: pointer;
 }
@@ -111,7 +112,7 @@ body{
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 0 4rem;
+    padding: 0 40px;
     height: 100%;
 }
 
@@ -125,31 +126,8 @@ body{
     height: 100%;
 }
 
-
 .form1 input::placeholder {
     color: #000000;
-}
-
-.nav-button:link,
-.nav-button:visited {
-  border-radius: 5rem;
-  padding: 1rem 1.6rem;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s;
-    background-color: #f8fcf5;
-    color: #2dc3f1;
-}
-
-.nav-button-forg:link,
-.nav-button-forg:visited {
-  border-radius: 5rem;
-  padding: 0.3rem 1.6rem;
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s;
-    background-color: #f8fcf5;
-    color: #2dc3f1;
 }
 
 .form2 input::placeholder {

@@ -21,17 +21,39 @@
       nomodule
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
     ></script>
-    <title>The right doc</title>
+    <title>DocFinder</title>
   </head>
   <body>
-{% include 'nav_bar/nav_bar.html' %}
+    <header class="header">
+<nav class="nav-bar">
+  <a class="logo-container">
+    <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
+  </a>
+  <form action="" class="search-bar">
+    <input
+      id="search-bar"
+      type="text"
+      placeholder="Search"
+      name="search-bar"
+    />
+    <button type="submit" class="search-btn">
+      <img src="{% static 'img/search-icon.png'%}" class="search-img" />
+    </button>
+  </form>
+  <div class="flex-align">
+    <a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a>
+      <a href="{% url 'register-patient'%}" class="register nav-button">Sign in</a>
+  </div>
+
+</nav>
+    </header>
 
     <main>
       <section class="section-hero">
         <div class="hero">
           <div class="hero-text-box">
             <h1 class="heading-primary animate">
-                The right DOC
+              Doctor reservation service
             </h1>
 
             <p class="hero-description">
@@ -116,7 +138,7 @@
                 healthcare is always within reach.
             </p>
             <form class="cta-form">
-                <a href="{% url 'map'%}" class="btn btn--form">get started</a>
+              <button class="btn btn--form">Get started</button>
               <button class="btn btn--form">Learn more</button>
             </form>
           </div>
