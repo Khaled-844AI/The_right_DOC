@@ -1,0 +1,62 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{%  static 'style.css' %}" />
+    <!-- Write your comments here -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <title>DocFinder</title>
+  </head>
+  <body>
+    <header class="header">
+{% include 'nav_bar/nav_bar.html' %}
+    </header>
+  <main>
+
+      <section>
+      <a href="{% url 'doc-list' %}" >
+    <h1 class="heading-primary animate">
+          Doctors List
+      </h1>
+  </a>
+
+
+          <h1>{{ doctors_count }} Doctor(s) Available</h1>
+      <br>
+          {% for doctor in doctors  %}
+            <h1>
+            Dr.{{ doctor.full_name }}
+            </h1>
+            <h1 >
+            specialty : {{ doctor.specialty }}
+            </h1>
+              <h2>
+            localisation :{{ doctor.office_location }}
+              </h2>
+              <br>
+              <a href="{% url 'doctor-profile' doctor.full_name %}">
+              <h1> view profile</h1>
+              </a>
+          <hr>
+            {% endfor %}
+
+      </section>
+  </main>
+  </body>
