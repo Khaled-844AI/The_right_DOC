@@ -2,12 +2,13 @@ import json
 
 from bs4 import BeautifulSoup
 from django.contrib.auth.hashers import check_password, make_password
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.http import JsonResponse
 from django.utils import timezone
 
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import authenticate, login, get_user_model, logout
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -20,6 +21,18 @@ from The_right_DOC.form import SPECIALTY_CHOICES
 
 def main_page(request):
     return render(request, 'index.html')
+
+
+def doclist(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+
+    doctors = Doctor.objects.filter(
+        Q(full_name__icontains=q) | Q(office_location__icontains=q) | Q(specialty__icontains=q)
+    )
+    doctors_count = doctors.count()
+    context = {'doctors': doctors, 'doctors_count': doctors_count}
+    return render(request, 'doclist.html', context)
+
 
 
 def verify_email(request, username):
@@ -122,7 +135,7 @@ def register_doctor(request):
                 user = Doctor.objects.get(email=email)
                 if check_password(password, user.password):  # Check hashed password
                     if user.accepted:
-                        return redirect('/doctor-profile/'+user.full_name)
+                        return redirect('/doctor-profile/' + user.full_name, {'full_name': user.full_name})
                     else:
                         messages.error(request, "Your account is not yet approved.")
                         storage = messages.get_messages(request)
@@ -199,7 +212,8 @@ def map(request):
     markers = Markers.objects.all().values('doctor__full_name', 'doctor__specialty', 'doctor__price',
                                            'latitude', 'longitude', 'description')
     # Pass the marker data to the template
-    return render(request, 'map.html', {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
+    return render(request, 'map.html',
+                  {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
 
 
 @login_required(login_url='/register')
@@ -215,7 +229,6 @@ def make_reservation(request):
             patient = request.user
             print(full_name + date + description)
             doctor = Doctor.objects.get(full_name=full_name)
-
 
             # Check if a reservation already exists for this doctor, patient, and date
             if Reservation.objects.filter(doctor=doctor, patient=patient, date=date).exists():
@@ -252,10 +265,11 @@ def make_reservation(request):
                                                                "full_name": full_name})
 
 
+def doctor_profile(request, pk):
+    doctor = Doctor.objects.get(full_name=pk)
+    context = {'doctor': doctor}
+    return render(request, "Doctor_Dashboard/Doctor_prof.html", context)
 
-def doctor_profile(request , full_name):
-    return render(request , "Doctor_Dashboard/Doctor_prof.html", {'full_name':full_name})
-
-
-
-
+def logoutUser(request):
+    logout(request)
+    return redirect('main-page')

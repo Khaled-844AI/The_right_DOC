@@ -4,13 +4,15 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.main_page, name='main-page'),
+    path('logout/', views.logoutUser, name='logout'),
+    path('doc-list', views.doclist, name='doc-list'),
     path('register/doctor/', views.register_doctor, name='register-doctor'),
     path('register/patient/', views.register_patient, name='register-patient'),
     path("verify-email/<slug:username>", views.verify_email, name="verify-email"),
     path("resend-otp", views.resend_otp, name="resend-otp"),
     path("register", views.choose, name="pat-or-doc"),
     path("doctor-reservation/<slug:full_name>", views.doctor_reservation, name="doctor-reservation"),
-    path("doctor-profile/<slug:full_name>", views.doctor_profile, name="doctor-profile"),
+    path("doctor-profile/<str:pk>/", views.doctor_profile, name="doctor-profile"),
     path("reservation/", views.make_reservation, name="reservation"),
     path("map", views.map, name="map"),
     path("reset_password", auth_views.PasswordResetView.as_view(template_name="password_reset.html"),

@@ -1,18 +1,27 @@
 {% load static %}
 <nav class="nav-bar">
-  <a class="logo-container">
+  <a href="{% url 'main-page' %}" class="logo-container">
     <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
   </a>
-  <form action="" class="search-bar">
-    <input
+  <form action="{% url 'doc-list' %}" class="search-bar">
+      <label for="search-bar"></label><input
       id="search-bar"
       type="text"
-      placeholder="Search"
-      name="search-bar"
+      placeholder="Search Doctors ..."
+      name="q"
     />
     <button type="submit" class="search-btn">
       <img src="{% static 'img/search-icon.png'%}" class="search-img" />
     </button>
   </form>
-
+    {% if request.user.is_authenticated %}
+       <div class="flex-align">
+            <a href="{% url 'logout'%}" class="register nav-button">Logout</a>
+        </div>
+    {% else %}
+        <div class="flex-align">
+            <a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a>
+            <a href="{% url 'register-patient'%}" class="register nav-button">Sign in</a>
+        </div>
+    {% endif %}
 </nav>
