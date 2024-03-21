@@ -4,9 +4,10 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.main_page, name='main-page'),
-    path('register/doctor/', views.register_doctor, name='register-doctor'),
-    path('register/patient/', views.register_patient, name='register-patient'),
+    path("register/patient/", views.PatientSignUpView.as_view(), name="register-patient"),
+    path("register/doctor/", views.DoctorSignUpView.as_view(), name="register-doctor"),
     path("verify-email/<slug:username>", views.verify_email, name="verify-email"),
+    path("login/", views.LoginView.as_view(), name="login"),
     path("resend-otp", views.resend_otp, name="resend-otp"),
     path("register", views.choose, name="pat-or-doc"),
     path("doctor-reservation/<slug:full_name>", views.doctor_reservation, name="doctor-reservation"),

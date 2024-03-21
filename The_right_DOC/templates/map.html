@@ -71,7 +71,7 @@ let markersData = [
             latitude: '{{ marker.latitude }}',
             longitude: '{{ marker.longitude }}',
             specialty: '{{ marker.doctor__specialty }}',
-            fullName: '{{ marker.doctor__full_name }}',
+            fullName: '{{ marker.doctor__username }}',
             price: '{{ marker.doctor__price }}'
         },
     {% endfor %}

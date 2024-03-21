@@ -1,22 +1,21 @@
 import json
 
-from bs4 import BeautifulSoup
 from django.contrib.auth.hashers import check_password, make_password
-from django.db.models.signals import post_save
-from django.http import JsonResponse
-from django.utils import timezone
+from django.urls import reverse
 
+from django.utils import timezone
+from django.contrib.auth import views as auth_views
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import CreateView
 
-from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, ReservationForm
-from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation
+from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, ReservationForm, LoginForm
+from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
-
+from .decorators import patient_required, doctor_required
 
 def main_page(request):
     return render(request, 'index.html')
@@ -34,9 +33,13 @@ def verify_email(request, username):
             # checking for expired token
             if user_otp.otp_expires_at > timezone.now():
                 user.is_active = True
+
+                user = User.objects.get(email=user.email)
+                user.is_active = True
+                user.save()
                 user.save()
                 messages.success(request, "Account activated successfully!! You can Login.")
-                return redirect("register-patient")
+                return redirect("login")
 
             # expired token
             else:
@@ -100,93 +103,84 @@ def resend_otp(request):
     return render(request, "resend_otp.html", context)
 
 
-def register_doctor(request):
-    if request.method == 'POST':
-        if 'sign_up' in request.POST:
-            form = Doctor_RegistrationForm(request.POST, request.FILES)
-            if form.is_valid():
-                # Handle form submission and save the doctor registration
-                form.save()
-                messages.success(request, "Account created successfully! Please wait for approval.")
-                storage = messages.get_messages(request)
-                storage.used = True
-            else:
-                for error in list(form.errors.values()):
-                    messages.error(request, error)
-                    storage = messages.get_messages(request)
+
+
+class PatientSignUpView(CreateView):
+    model = User
+    form_class = Patient_RegistrationForm
+    template_name = 'Patient_R.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'patient'
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        user = form.save(self.request)
+        messages.success(self.request, f"You account has been successfully created please check {user.email}")
+        storage = messages.get_messages(self.request)
+        storage.used = True
+        login(self.request, user)
+        return redirect('login')
+
+
+class DoctorSignUpView(CreateView):
+    model = User
+    form_class = Doctor_RegistrationForm
+    template_name = 'Doctor_R.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'doctor'
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        user = form.save()
+        messages.success(self.request, f"You account has been successfully created please check {user.email}"
+                                       f"and wait for approval")
+        storage = messages.get_messages(self.request)
+        storage.used = True
+        return redirect('login')
+
+
+class LoginView(auth_views.LoginView):
+    form_class = LoginForm
+    template_name = 'Signin.html'
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.is_superuser:
+            user.is_patient = True
+        if user.is_authenticated:
+            print(user.is_patient)
+            print(user.is_doctor)
+            if user.is_patient:
+                print('patient')
+                return reverse('map')
+            elif user.is_doctor:
+                doctor = Doctor.objects.get(username=user.username)
+                if not doctor.accepted:
+                    messages.error(self.request, f"Account not approved yet wait for approval")
+                    storage = messages.get_messages(self.request)
                     storage.used = True
-        elif 'sign_in' in request.POST:
-            email = request.POST.get('email')
-            password = request.POST.get('pass1')  # Adjust this according to your form field name
-            try:
-                user = Doctor.objects.get(email=email)
-                if check_password(password, user.password):  # Check hashed password
-                    if user.accepted:
-                        return redirect('/doctor-profile/'+user.full_name, {'full_name': user.full_name})
-                    else:
-                        messages.error(request, "Your account is not yet approved.")
-                        storage = messages.get_messages(request)
-                        storage.used = True
+                    return reverse('login')
                 else:
-                    messages.error(request, "Invalid credentials.")
-                    storage = messages.get_messages(request)
-                    storage.used = True
-            except Doctor.DoesNotExist:
-                messages.error(request, "Invalid credentials.")
+                    print('doctor')
+                    return reverse('doctor-profile', kwargs={'full_name': user.username})
+        return reverse('login')
 
-    form = Doctor_RegistrationForm()
-    print("Rendering signup form.")
-
-    return render(
-        request=request,
-        template_name="Doctor_R.html",
-        context={"form": form}
-    )
-
-
-def register_patient(request):
-    if request.method == 'POST':
-        if 'sign_up' in request.POST:
-            form = Patient_RegistrationForm(request.POST)
-            if form.is_valid():
-                user = form.save()
-                print("Form saved successfully.")
-                messages.success(request, f'Hy {user.username}, your account has been created successfully.\
-                    \nPlease check your email at {user.email} for verification instructions.')
-                return redirect('verify-email', username=request.POST['username'])
-            else:
-                for error in list(form.errors.values()):
-                    messages.error(request, error)
-                    storage = messages.get_messages(request)
-                    storage.used = True
-        elif 'sign_in' in request.POST:
-            email = request.POST.get('email2')
-            password = request.POST.get('pass2')
-            user = authenticate(request, email=email, password=password)
-            if user is not None and user.is_active:
-                login(request, user)
-                messages.success(request, "Logged In Successfully!!")
-                return redirect('/map')
-            else:
-                messages.error(request, "Bad Credentials!!")
-                storage = messages.get_messages(request)
-                storage.used = True
-
-    form = Patient_RegistrationForm()
-    print("Rendering signup form.")
-
-    return render(
-        request=request,
-        template_name="Patient_R.html",
-        context={"form": form}
-    )
+    def form_invalid(self, form):
+        # Add a message for invalid login (incorrect username or password)
+        messages.error(self.request, 'Invalid username or password. Please try again.')
+        return super().form_invalid(form)
 
 
 def choose(request):
     return render(request, "patient_or_doc.html")
 
 
-@login_required(login_url='/register')
+@login_required(login_url='/login')
 def doctor_reservation(request, full_name):
     form = ReservationForm()
 
@@ -194,15 +188,15 @@ def doctor_reservation(request, full_name):
                                                                "full_name": full_name})
 
 
-@login_required(login_url='/register')
+@login_required(login_url='/login')
 def map(request):
-    markers = Markers.objects.all().values('doctor__full_name', 'doctor__specialty', 'doctor__price',
+    markers = Markers.objects.all().values('doctor__username', 'doctor__specialty', 'doctor__price',
                                            'latitude', 'longitude', 'description')
     # Pass the marker data to the template
     return render(request, 'map.html', {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
 
 
-@login_required(login_url='/register')
+@login_required(login_url='/login')
 def make_reservation(request):
     form = ReservationForm()
     full_name = request.POST['full_name']
@@ -214,7 +208,7 @@ def make_reservation(request):
             description = form.cleaned_data['description']
             patient = request.user
             print(full_name + date + description)
-            doctor = Doctor.objects.get(full_name=full_name)
+            doctor = Doctor.objects.get(username=full_name)
 
 
             # Check if a reservation already exists for this doctor, patient, and date
@@ -251,10 +245,8 @@ def make_reservation(request):
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
                                                                "full_name": full_name})
 
-
-
 def doctor_profile(request , full_name):
-    return render(request , "Doctor_Dashboard/Doctor_prof.html", {'full_name':full_name})
+    return render(request, "Doctor_Dashboard/Doctor_prof.html", {'full_name':full_name})
 
 
 

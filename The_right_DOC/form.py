@@ -2,10 +2,12 @@ from datetime import datetime, timedelta
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.hashers import make_password
+from django.db import transaction
+from django.shortcuts import redirect
 
-from The_right_DOC.models import Doctor,  Markers , Reservation
+from The_right_DOC.models import Doctor, Markers, Reservation, Patient
 from django.contrib import messages
 
 SPECIALTY_CHOICES = [
@@ -115,7 +117,7 @@ class Doctor_timingForm(forms.Form):
         if int(s_hour) > int(e_hour) or int(s_hour) == int(e_hour):
             messages.error(request, "Invalid time")  # Corrected this line
 
-    def save(self,doctor):
+    def save(self, doctor):
         doctor.start_w = self.start_w
         doctor.end_w = self.end_w
         doctor.save()
@@ -131,7 +133,9 @@ class ReservationForm(forms.Form):
     }))
 
 
-class Doctor_RegistrationForm(forms.Form):
+User = get_user_model()
+
+class Doctor_RegistrationForm(UserCreationForm):
     email = forms.EmailField(widget=forms.TextInput(attrs={
         'class': 'input',
         'placeholder': 'Your email',
@@ -168,6 +172,10 @@ class Doctor_RegistrationForm(forms.Form):
         'required': 'True'
     }))
 
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ('email', 'full_name', 'password1', 'password2')
+
     def clean_password2(self):
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")
@@ -184,30 +192,31 @@ class Doctor_RegistrationForm(forms.Form):
 
     def clean_full_name(self):
         full_name = self.cleaned_data.get('full_name')
-        if Doctor.objects.filter(full_name=full_name).exists():
+        if Doctor.objects.filter(username=full_name).exists():
             raise forms.ValidationError('this username already exists')
         return full_name
 
+    @transaction.atomic
     def save(self, commit=True):
-        print(self.cleaned_data['password1'])
-        doctor = Doctor(
-            full_name=self.cleaned_data['full_name'],
+        user = super().save(commit=False)
+        user.username = self.cleaned_data['full_name']
+        user.is_doctor = True
+        if commit:
+            user.save()
+        doctor = Doctor.objects.create(user=user, username=self.cleaned_data['full_name'],
             email=self.cleaned_data['email'],
             office_location=self.cleaned_data['office_location'],
             specialty=self.cleaned_data['specialty'],
             graduation_certificate=self.cleaned_data['graduation_certificate'],
-            password=make_password(self.cleaned_data['password1'])
+            password=self.cleaned_data['password1'])
+        marker = Markers.objects.create(
+            doctor=doctor,
+            latitude=12,
+            longitude=-15,
+            description=f'-Doctor: {doctor.username} \n-Specialty: {doctor.specialty}'
         )
-        if commit:
-            doctor.save()
-            marker = Markers.objects.create(
-                doctor=doctor,
-                latitude=12,
-                longitude=-15,
-                description=f'-Doctor: {doctor.full_name} \n-Specialty: {doctor.specialty}'
-            )
-            marker.save()
-        return doctor
+        marker.save()
+        return user
 
 
 class Patient_RegistrationForm(UserCreationForm):
@@ -232,8 +241,34 @@ class Patient_RegistrationForm(UserCreationForm):
         'required': 'True'
     }))
 
-    class Meta:
-        model = get_user_model()
-        fields = ["email", "username", "password1", "password2"]
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ('email', 'username', 'password1', 'password2')
+
+    @transaction.atomic
+    def save(self, request, commit=True):
+        user = super().save(commit=False)
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email, is_active=True).exists():
+            messages.error(request, 'Email is already in use.')
+            return redirect('register-patient')
+        user.is_patient = True
+        if commit:
+            user.save()
+        patient = Patient.objects.create(user=user, email=self.cleaned_data['email'],
+                                         is_active=False)
+        return user
 
 
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'input',
+        'placeholder': 'Your username',
+        'required': 'True'
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'input',
+        'placeholder': 'Your password',
+        'required': 'True'
+    }))

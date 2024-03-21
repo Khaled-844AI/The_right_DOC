@@ -1,17 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import *
 
 
 # Register your models here.
-class Patient_Admin(UserAdmin):
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2')}
-         ),
-    )
+class PatientAdmin(admin.ModelAdmin):
+    list_display = ('user', 'is_active')
+    search_fields = ('user__email',)
+    list_filter = ('is_active',)
 
 
 class OtpTokenAdmin(admin.ModelAdmin):
@@ -35,8 +32,9 @@ class ReservationAdmin(admin.ModelAdmin):
         obj.save()
 
 
+admin.site.register(User, BaseUserAdmin)
 admin.site.register(Reservation, ReservationAdmin)
 admin.site.register(Doctor, DoctorAdmin)
 admin.site.register(OtpToken, OtpTokenAdmin)
-admin.site.register(Patient, Patient_Admin)
+admin.site.register(Patient, PatientAdmin)
 admin.site.register(Markers, MarkersAdmin)

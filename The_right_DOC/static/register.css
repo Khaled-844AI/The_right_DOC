@@ -130,6 +130,17 @@ body{
     color: #000000;
 }
 
+.nav-button:link,
+.nav-button:visited {
+  border-radius: 1000px;
+  padding: 1rem 1.6rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+    background-color: #f8fcf5;
+    color: #2dc3f1;
+}
+
 .form2 input::placeholder {
     color: #000000;
 }
