@@ -15,7 +15,6 @@ from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm
 from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
-from .decorators import patient_required, doctor_required
 
 def main_page(request):
     return render(request, 'index.html')
