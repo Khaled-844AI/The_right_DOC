@@ -31,13 +31,18 @@
   overflow: hidden;
   display: flex;
   align-items: center;
-
   height: 100vh;
 }
 
 .inner-container .profile-form{
-
+  margin-right: 27rem;
 }
+
+.inner-container .profile-info{
+  margin-bottom: 30rem;
+}
+
+
 
 * {
   padding: 0;

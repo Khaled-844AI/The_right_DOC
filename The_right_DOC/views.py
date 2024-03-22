@@ -181,7 +181,7 @@ def choose(request):
     return render(request, "patient_or_doc.html")
 
 
-@doctor_required(login_url='/login')
+@patient_required(login_url='/login')
 def doctor_reservation(request, full_name):
     form = ReservationForm()
 
@@ -207,7 +207,7 @@ def make_reservation(request):
             date = request.POST['reservation_date']  # Assuming your form field name is 'reservation_date'
 
             description = form.cleaned_data['description']
-            patient = request.user
+            patient = Patient.objects.get(user=request.user)
             print(full_name + date + description)
             doctor = Doctor.objects.get(username=full_name)
 
