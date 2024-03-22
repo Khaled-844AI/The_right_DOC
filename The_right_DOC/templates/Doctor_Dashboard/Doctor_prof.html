@@ -125,6 +125,16 @@
   </style>
 </head>
 
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">
+                {{ message|safe }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 <body class="light">
   <div class="container">
     <div class="side-bar">
@@ -159,16 +169,17 @@
           <p>Location: {{ doctor.office_location }}</p>
           <br>
           <p>specialty: {{ doctor.specialty }}</p>
+
         </div>
-        {% if  request.user.email == doctor.email%}
-        	<form method="POST" action="">
+
+        	<form class="profile-form" method="POST" action="">
             {% csrf_token %}
           <label>Start work</label>
-          <input type="time" placeholder="start work" name="start_w">
+          <input type="time" placeholder="start work" name="start_w" required>
           <label>End work</label>
-          <input type="time" placeholder="end work" name="end_w">
-          <input type="number" placeholder="max patients" name="max_pat_day">
-          <label>Rest days</label><br>
+          <input type="time" placeholder="end work" name="end_w" required>
+          <input type="number" placeholder="max patients" name="max_pat_day" required>
+          <label>Rest days :</label><br><br>
     <input type="checkbox" name="none_work[]" value="Sunday"> Sunday<br>
     <input type="checkbox" name="none_work[]" value="Monday"> Monday<br>
     <input type="checkbox" name="none_work[]" value="Tuesday"> Tuesday<br>
@@ -177,31 +188,8 @@
     <input type="checkbox" name="none_work[]" value="Friday"> Friday<br>
     <input type="checkbox" name="none_work[]" value="Saturday"> Saturday<br>
     <input type="hidden" id="rest_days" name="rest_days">
-          <input type="hidden" value="{{ username }}">
           <button type="submit">Save</button>
         </form>
-            {% else %}
-            <div class="profile-info">
-          <p>Start work : {{ doctor.start_w }}</p>
-          <br>
-          <p>End work: {{ doctor.end_w }}</p>
-          <br>
-          <p>max patients in day: {{ doctor.max_pat_day }}</p>
-          <br>
-          <p>rest days: {{ doctor.none_work }}</p>
-        </div>
-        <br>
-        {% endif %}
-    {% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-success" role="alert">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
-
-        
-
       <!-- End Profile Section -->
     </div>
   </div>

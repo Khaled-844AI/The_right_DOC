@@ -32,15 +32,7 @@
         <div class="hero">
           <div class="hero-text-box">
             <h1 class="heading-primary animate">
-                {% if user.is_authenticated and user.is_doctor%}
-                    Hello Dr.{{ user.username }}
-                    {% elif user.is_authenticated and user.is_patient %}
-                    Hello Patient {{ user.username }}
-                    {% elif  user.is_authenticated%}
-                    Hello Admin {{ user.username }}
-                    {% else %}
-              Doctor reservation service
-                {% endif %}
+                The right DOC
             </h1>
 
             <p class="hero-description">

@@ -72,7 +72,9 @@ let markersData = [
             longitude: '{{ marker.longitude }}',
             specialty: '{{ marker.doctor__specialty }}',
             fullName: '{{ marker.doctor__username }}',
-            price: '{{ marker.doctor__price }}'
+            price: '{{ marker.doctor__price }}',
+            start:'{{ marker.doctor__start_w }}',
+            end:'{{ marker.doctor__end_w }}'
         },
     {% endfor %}
 ];
@@ -93,6 +95,8 @@ function filterMarkersBySpecialty(specialty) {
                 `<h2>Dr. ${marker.fullName}</h2>` +
                 `<b>-Specialty: ${marker.specialty}</b><br>` +
                 `<b>-Price: ${marker.price}DA</b><br>` +
+                `<b>-Start at: ${marker.start}DA</b><br>` +
+                `<b>-End at: ${marker.end}DA</b><br>` +
                 `<a href="${url}" class="btn_map btn--fill ">Reserve now</a>`
             );
 

@@ -12,6 +12,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 
+from The_right_DOC.decorators import patient_required, doctor_required
 from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, ReservationForm, LoginForm
 from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User
 from django.contrib.auth.decorators import login_required
@@ -180,7 +181,7 @@ def choose(request):
     return render(request, "patient_or_doc.html")
 
 
-@login_required(login_url='/login')
+@doctor_required(login_url='/login')
 def doctor_reservation(request, full_name):
     form = ReservationForm()
 
@@ -188,15 +189,15 @@ def doctor_reservation(request, full_name):
                                                                "full_name": full_name})
 
 
-@login_required(login_url='/login')
+@patient_required(login_url='/login')
 def map(request):
-    markers = Markers.objects.all().values('doctor__username', 'doctor__specialty', 'doctor__price',
-                                           'latitude', 'longitude', 'description')
+    markers = Markers.objects.all().values('doctor__username', 'doctor__specialty', 'doctor__price','doctor__start_w',
+                                           'doctor__end_w','latitude', 'longitude', 'description')
     # Pass the marker data to the template
     return render(request, 'map.html', {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
 
 
-@login_required(login_url='/login')
+@patient_required(login_url='url')
 def make_reservation(request):
     form = ReservationForm()
     full_name = request.POST['full_name']
@@ -245,14 +246,19 @@ def make_reservation(request):
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
                                                                "full_name": full_name})
 
+
+@doctor_required(login_url='url')
 def doctor_profile(request , pk):
     doctor = Doctor.objects.get(username=pk)
+    print(request.user.username)
     if request.user.username == doctor.username:
         if request.method == 'POST':
             start_w = request.POST.get('start_w')
             end_w = request.POST.get('end_w')
             max_pat_day = request.POST.get('max_pat_day')
             none_work = request.POST.getlist('none_work[]')
+
+            print(start_w)
 
             doctor.start_w = start_w
             doctor.end_w = end_w
