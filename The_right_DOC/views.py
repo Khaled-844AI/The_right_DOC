@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.hashers import check_password, make_password
+from django.http import HttpResponse
 from django.urls import reverse
 
 from django.utils import timezone
@@ -166,7 +167,7 @@ class LoginView(auth_views.LoginView):
                     return reverse('login')
                 else:
                     print('doctor')
-                    return reverse('doctor-profile', kwargs={'full_name': user.username})
+                    return reverse('doctor-profile', kwargs={'pk': user.username})
         return reverse('login')
 
     def form_invalid(self, form):
@@ -244,8 +245,25 @@ def make_reservation(request):
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
                                                                "full_name": full_name})
 
-def doctor_profile(request , full_name):
-    return render(request, "Doctor_Dashboard/Doctor_prof.html", {'full_name':full_name})
+def doctor_profile(request , pk):
+    doctor = Doctor.objects.get(username=pk)
+    if request.user.username == doctor.username:
+        if request.method == 'POST':
+            start_w = request.POST.get('start_w')
+            end_w = request.POST.get('end_w')
+            max_pat_day = request.POST.get('max_pat_day')
+            none_work = request.POST.getlist('none_work[]')
+
+            doctor.start_w = start_w
+            doctor.end_w = end_w
+            doctor.max_pat_day = max_pat_day
+            doctor.none_work = ",".join(none_work)
+            doctor.save()
+            messages.success(request, 'Your information has been successfully updated.')
+            return redirect('doctor-profile', pk=pk)
+
+    context = {'doctor': doctor}
+    return render(request, "Doctor_Dashboard/Doctor_prof.html", context)
 
 
 def logoutUser(request):
