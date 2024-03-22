@@ -25,7 +25,6 @@
             
         <div class="form-container sign-up">
     <form class = "form1" id="input" method="post" action="{% url 'register-doctor' %}" enctype="multipart/form-data">
-
     {% csrf_token %}
 {% for item in form %}
     <div class="fieldWrapper {% if forloop.last or forloop.counter0 == form_length_minus_2 %}rightAligned{% endif %}">
@@ -48,6 +47,7 @@
             <small class="form-text text-muted">{{ item.help_text|safe }}</small>
         {% endif %}
     </div>
+    </form>
     <br>
 {% endfor %}
 

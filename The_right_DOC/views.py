@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.urls import reverse
 
 from django.utils import timezone
-from django.contrib.auth import views as auth_views
+from django.contrib.auth import views as auth_views, logout
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, get_user_model
 from django.core.mail import send_mail
@@ -248,5 +248,7 @@ def doctor_profile(request , full_name):
     return render(request, "Doctor_Dashboard/Doctor_prof.html", {'full_name':full_name})
 
 
-
+def logoutUser(request):
+    logout(request)
+    return redirect('main-page')
 
