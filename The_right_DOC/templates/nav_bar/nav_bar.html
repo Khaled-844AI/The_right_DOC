@@ -3,11 +3,11 @@
   <a href="{% url 'main-page' %}" class="logo-container">
     <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
   </a>
-  <form action="" class="search-bar">
+<form action="{% url 'doc-list' %}" class="search-bar">
       <label for="search-bar"></label><input
       id="search-bar"
       type="text"
-      placeholder="Search Doctors ..."
+      placeholder="Doctor, Specialty , Localisation... "
       name="q"
     />
     <button type="submit" class="search-btn">
@@ -22,6 +22,7 @@
 
     {% else %}
         <div class="flex-align">
+            <a href="{% url 'doc-list'%}" class="log-in nav-button">Doctors</a>
             <a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a>
             <a href="{% url 'login'%}" class="register nav-button">Sign in</a>
         </div>

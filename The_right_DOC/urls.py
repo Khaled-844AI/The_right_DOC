@@ -13,6 +13,7 @@ urlpatterns = [
     path("register", views.choose, name="pat-or-doc"),
     path("doctor-reservation/<slug:full_name>", views.doctor_reservation, name="doctor-reservation"),
     path("doctor-profile/<str:pk>", views.doctor_profile, name="doctor-profile"),
+    path("doc-list/", views.docListView, name="doc-list"),
     path("reservation/", views.make_reservation, name="reservation"),
     path("map", views.map, name="map"),
     path("reset_password", auth_views.PasswordResetView.as_view(template_name="password_reset.html"),

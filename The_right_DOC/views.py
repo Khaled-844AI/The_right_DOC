@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.hashers import check_password, make_password
+from django.db.models import Q
 from django.http import HttpResponse
 from django.urls import reverse
 
@@ -247,7 +248,7 @@ def make_reservation(request):
                                                                "full_name": full_name})
 
 
-@doctor_required(login_url='url')
+#@doctor_required(login_url='url')
 def doctor_profile(request , pk):
     doctor = Doctor.objects.get(username=pk)
     print(request.user.username)
@@ -276,3 +277,12 @@ def logoutUser(request):
     logout(request)
     return redirect('main-page')
 
+def docListView(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+
+    doctors = Doctor.objects.filter(
+        Q(username__icontains=q) | Q(office_location__icontains=q) | Q(specialty__icontains=q)
+    )
+    doctors_count = doctors.count()
+    context = {'doctors': doctors, 'doctors_count': doctors_count}
+    return render(request, 'doc_list.html',context)
