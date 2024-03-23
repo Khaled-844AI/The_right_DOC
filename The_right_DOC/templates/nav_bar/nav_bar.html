@@ -1,4 +1,27 @@
 {% load static %}
+
+<style>
+    /* Add this CSS to your stylesheet */
+.nav-bar .search-bar {
+  outline: none; /* Remove the default blue outline */
+  border: 1px solid #ccc; /* Add a border to the input for better visibility */
+  padding: 0.7rem; /* Add padding for better spacing */
+  border-radius: 2rem; /* Optional: Add border-radius for rounded corners */
+}
+    .nav-button-forg:link,
+.nav-button-forg:visited {
+  border-radius: 5rem;
+  padding: 0.3rem 1.6rem;
+  margin-right: 2rem ;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s;
+    background-color: #f8fcf5;
+    color: #2dc3f1;
+}
+
+
+</style>
 <nav class="nav-bar">
   <a href="{% url 'main-page' %}" class="logo-container">
     <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
@@ -9,16 +32,27 @@
       type="text"
       placeholder="Doctor, Specialty , Localisation... "
       name="q"
+      class="search-input"
     />
     <button type="submit" class="search-btn">
       <img src="{% static 'img/search-icon.png'%}" class="search-img" />
     </button>
   </form>
     {% if user.is_authenticated%}
+        {% if user.is_patient %}
+            <a href="{% url 'chk-reservations'%}" class="log-in nav-button-forg">Reservations</a>
+        {% endif %}
+
+        {% if user.is_doctor %}
+
+            <a href="{% url 'doctor-profile' user.username%}" class="log-in nav-button-forg">Profile</a>
+
+        {% endif %}
         {% if user.is_patient or user.is_doctor%}
        <div class="flex-align">
         <a href="{% url 'doc-list'%}" class="log-in nav-button">Doctors</a>
             <a href="{% url 'logout'%}" class="register nav-button">Logout</a>
+
         </div>
 
     {% else %}

@@ -9,10 +9,9 @@
 <link rel="stylesheet" href="{% static 'style.css' %}" />
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
 <style>
-body { margin: 0; padding: 0; }
 #map { position: absolute; top: 8rem; bottom: 0; width: 85%; border-radius: 3rem;
     margin-left: 10rem; margin-right: 10rem; margin-bottom: 10rem; margin-top: 2rem;}
-/* Popups (adjustments to emulate Leaflet.js) - see https://github.com/mapbox/mapbox-gl-js/issues/8368 */
+
 @keyframes fadein {from {opacity: 0;} to {opacity: 1;}}
 .mapboxgl-popup {animation: fadein 0.2s;}
 .mapboxgl-popup-content {align-items:center;max-width: 60rem; min-width: 20rem; border-radius: 12px; padding: 13px 19px; box-shadow: 0 3px 14px rgba(12, 211, 246, 5);
@@ -40,9 +39,9 @@ body .mapboxgl-map {line-height: 1.4;}
 </style>
 </head>
 <body>
-    <header class="header">
-        {% include 'nav_bar/nav_bar.html' %}
-    </header>
+
+{% include 'nav_bar/nav_bar.html' %}
+
 <div id="map"></div>
 
 <div class="specialty-button">

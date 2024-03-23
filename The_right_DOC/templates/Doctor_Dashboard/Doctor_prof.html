@@ -134,7 +134,6 @@
         {% endfor %}
     </ul>
 {% endif %}
-
 <body class="light">
   <div class="container">
     <div class="side-bar">
@@ -155,7 +154,7 @@
             </div>
           </a>
         </li>
-        <li class="list-elt push"><a href="#">Logout</a></li>
+        <li class="list-elt push"><a href="{% url 'logout' %}">Logout</a></li>
       </ul>
     </div>
     <div class="inner-container">

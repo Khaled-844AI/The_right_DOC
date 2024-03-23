@@ -248,7 +248,7 @@ def make_reservation(request):
                                                                "full_name": full_name})
 
 
-#@doctor_required(login_url='url')
+@doctor_required(login_url='login')
 def doctor_profile(request , pk):
     doctor = Doctor.objects.get(username=pk)
     print(request.user.username)
@@ -277,6 +277,7 @@ def logoutUser(request):
     logout(request)
     return redirect('main-page')
 
+
 def docListView(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
 
@@ -286,3 +287,25 @@ def docListView(request):
     doctors_count = doctors.count()
     context = {'doctors': doctors, 'doctors_count': doctors_count}
     return render(request, 'doc_list.html',context)
+
+
+def check_reservations(request):
+    patient = Patient.objects.get(user=request.user)
+    current_date = timezone.now().date()  # Get the current date
+    print(current_date)
+    # Filter reservations for today and the future
+    reservations = Reservation.objects.filter(patient=patient, date__gte=current_date)
+
+    return render(request, 'Patient_Dashboard/Reservation.html', {'reservations': reservations})
+
+
+def cancel_reservations(request, reservation_id):
+    if request.method == 'POST':
+        try:
+            reservation = Reservation.objects.get(id=reservation_id)
+            reservation.delete()
+            messages.success(request, 'Reservation canceled successfully.')
+        except Reservation.DoesNotExist:
+            messages.error(request, 'Reservation not found.')
+    return redirect('/my-reservations')  # Redirect to the reservation page
+
