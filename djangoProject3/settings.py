@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'The_right_DOC.apps.TheRightDocConfig',
+    'django_recaptcha'
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+RECAPTCHA_PUBLIC_KEY = '6Lc4d6IpAAAAABOeb2Tr8xm4baf60mQNkcHG5fxU'
+RECAPTCHA_PRIVATE_KEY = '6Lc4d6IpAAAAAACcVKBWGforGUmqzgsgdYRQaglR'
