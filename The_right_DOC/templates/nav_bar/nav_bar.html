@@ -17,6 +17,7 @@
     {% if user.is_authenticated%}
         {% if user.is_patient or user.is_doctor%}
        <div class="flex-align">
+        <a href="{% url 'doc-list'%}" class="log-in nav-button">Doctors</a>
             <a href="{% url 'logout'%}" class="register nav-button">Logout</a>
         </div>
 
@@ -29,6 +30,7 @@
             {% endif %}
         {% else  %}
         <div class="flex-align">
+            <a href="{% url 'doc-list'%}" class="log-in nav-button">Doctors</a>
             <a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a>
             <a href="{% url 'login'%}" class="register nav-button">Sign in</a>
         </div>
