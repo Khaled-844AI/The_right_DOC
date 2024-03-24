@@ -250,22 +250,24 @@ def make_reservation(request):
 
 
 @doctor_required(login_url='login')
-def doctor_profile(request , pk):
+def doctor_profile(request, pk):
     doctor = Doctor.objects.get(username=pk)
     print(request.user.username)
+
     if request.user.username == doctor.username:
         if request.method == 'POST':
             start_w = request.POST.get('start_w')
             end_w = request.POST.get('end_w')
             max_pat_day = request.POST.get('max_pat_day')
             none_work = request.POST.getlist('none_work[]')
-
-            print(start_w)
+            price = request.POST.get('price')
+            print(price)
 
             doctor.start_w = start_w
             doctor.end_w = end_w
             doctor.max_pat_day = max_pat_day
             doctor.none_work = ",".join(none_work)
+            doctor.price = price
             doctor.save()
             messages.success(request, 'Your information has been successfully updated.')
             return redirect('doctor-profile', pk=pk)
