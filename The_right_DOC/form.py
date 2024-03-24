@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
 from django import forms
-from django_recaptcha.fields import ReCaptchaField
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -264,7 +263,6 @@ class Patient_RegistrationForm(UserCreationForm):
 
 
 class LoginForm(AuthenticationForm):
-    captcha = ReCaptchaField()
     username = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'input',
         'placeholder': 'Your username',

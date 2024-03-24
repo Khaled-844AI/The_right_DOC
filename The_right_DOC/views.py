@@ -185,9 +185,10 @@ def choose(request):
 @patient_required(login_url='/login')
 def doctor_reservation(request, full_name):
     form = ReservationForm()
-
+    doctor = Doctor.objects.get(username=full_name)
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                               "full_name": full_name})
+                                                               "full_name": full_name,
+                                                               "non_work":doctor.none_work})
 
 
 @patient_required(login_url='/login')

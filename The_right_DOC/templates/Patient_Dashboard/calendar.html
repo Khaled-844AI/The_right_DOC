@@ -64,6 +64,11 @@
     text-transform: capitalize; /* Capitalize status text */
 }
 
+.non_work{
+    background: #f18080;
+    border-radius: 3rem;
+}
+
 
     </style>
   </head>
@@ -278,6 +283,8 @@
         31,
       ];
 
+      const non_w = '{{ non_work }}'
+
       calendar_days.innerHTML = "";
 
       let currDate = new Date();
@@ -299,17 +306,25 @@
           day.classList.add("calendar-day-hover");
           day.innerHTML = i - first_day.getDay() + 1;
 
-          if (i >= today.getDate() && (i - first_day.getDay() + 1) >= today.getDate()) {
+          if (i >= today.getDate() && (i - first_day.getDay() + 1) >= today.getDate() && !non_w.split(',').includes(getDayName(i))){
               day.addEventListener("click", (event) => {
                   const popup = document.querySelector('.popup')
                   show_popup(popup, `${year}-${month + 1}-${i - first_day.getDay() + 1}`);
               });
+          }
+          if (non_w.split(',').includes(getDayName(i))) {
+                  day.classList.add("non_work");
           }
         } else {
           day.classList.add("empty-day");
         }
         calendar_days.appendChild(day);
       }
+    };
+
+    const getDayName = (index) => {
+       const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+       return daysOfWeek[index % 7];
     };
 
     let month_list = calendar.querySelector(".month-list");
