@@ -203,6 +203,7 @@ def map(request):
 def make_reservation(request):
     form = ReservationForm()
     full_name = request.POST['full_name']
+    doctor = Doctor.objects.get(username=full_name)
     if request.method == 'POST':
         form = ReservationForm(request.POST)
         if form.is_valid():
@@ -211,7 +212,17 @@ def make_reservation(request):
             description = form.cleaned_data['description']
             patient = Patient.objects.get(user=request.user)
             print(full_name + date + description)
-            doctor = Doctor.objects.get(username=full_name)
+
+            time = timezone.now().time()
+            doc_end_time = doctor.end_w
+
+            if time > doc_end_time:
+                messages.error(request, f'reservations with Dr {doctor} are done today')
+                storage = messages.get_messages(request)
+                storage.used = True
+                return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
+                                                                           "full_name": full_name,
+                                                                           "non_work": doctor.none_work})
 
 
             # Check if a reservation already exists for this doctor, patient, and date
@@ -220,7 +231,8 @@ def make_reservation(request):
                 storage = messages.get_messages(request)
                 storage.used = True
                 return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                                           "full_name": full_name})
+                                                                           "full_name": full_name,
+                                                                           "non_work":doctor.none_work})
             # Get the highest priority reservation for this doctor and date
             highest_priority = Reservation.objects.filter(doctor=doctor, date=date).order_by('-priority').first()
 
@@ -230,7 +242,8 @@ def make_reservation(request):
                 storage = messages.get_messages(request)
                 storage.used = True
                 return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                                           "full_name": full_name})
+                                                                           "full_name": full_name,
+                                                                           "non_work":doctor.none_work})
 
             # Create a new reservation instance and save it
             reservation = Reservation(doctor=doctor, patient=patient, date=date, description=description)
@@ -240,13 +253,15 @@ def make_reservation(request):
             storage = messages.get_messages(request)
             storage.used = True
             return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                                       "full_name": full_name})
+                                                                       "full_name": full_name,
+                                                                       "non_work":doctor.none_work})
         else:
             messages.error(request, 'Invalid form')
             storage = messages.get_messages(request)
             storage.used = True
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
-                                                               "full_name": full_name})
+                                                               "full_name": full_name,
+                                                               "non_work":doctor.none_work})
 
 
 @doctor_required(login_url='login')
@@ -292,6 +307,7 @@ def docListView(request):
     return render(request, 'doc_list.html',context)
 
 
+@patient_required(login_url='login')
 def check_reservations(request):
     patient = Patient.objects.get(user=request.user)
     current_date = timezone.now().date()  # Get the current date
@@ -302,6 +318,7 @@ def check_reservations(request):
     return render(request, 'Patient_Dashboard/Reservation.html', {'reservations': reservations})
 
 
+@patient_required(login_url='login')
 def cancel_reservations(request, reservation_id):
     if request.method == 'POST':
         try:
