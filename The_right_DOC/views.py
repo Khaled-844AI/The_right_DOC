@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.hashers import check_password, make_password
 from django.db.models import Q
 from django.http import HttpResponse
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from django.utils import timezone
 from django.contrib.auth import views as auth_views, logout
@@ -18,6 +18,7 @@ from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm
 from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
+
 
 def main_page(request):
     return render(request, 'index.html')
@@ -105,12 +106,16 @@ def resend_otp(request):
     return render(request, "resend_otp.html", context)
 
 
-
-
 class PatientSignUpView(CreateView):
     model = User
     form_class = Patient_RegistrationForm
     template_name = 'Patient_R.html'
+    success_url = reverse_lazy('main-page')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(self.success_url)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'patient'
@@ -129,6 +134,12 @@ class DoctorSignUpView(CreateView):
     model = User
     form_class = Doctor_RegistrationForm
     template_name = 'Doctor_R.html'
+    success_url = reverse_lazy('main-page')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(self.success_url)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'doctor'
@@ -146,6 +157,12 @@ class DoctorSignUpView(CreateView):
 class LoginView(auth_views.LoginView):
     form_class = LoginForm
     template_name = 'Signin.html'
+    success_url = reverse_lazy('main-page')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect(self.success_url)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(**kwargs)
@@ -178,6 +195,16 @@ class LoginView(auth_views.LoginView):
         return super().form_invalid(form)
 
 
+def anonymous_required(view_function):
+    def wrapped(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('main-page')
+        return view_function(request, *args, **kwargs)
+
+    return wrapped
+
+
+@anonymous_required
 def choose(request):
     return render(request, "patient_or_doc.html")
 
@@ -188,15 +215,16 @@ def doctor_reservation(request, full_name):
     doctor = Doctor.objects.get(username=full_name)
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
                                                                "full_name": full_name,
-                                                               "non_work":doctor.none_work})
+                                                               "non_work": doctor.none_work})
 
 
 @patient_required(login_url='/login')
 def map(request):
-    markers = Markers.objects.all().values('doctor__username', 'doctor__specialty', 'doctor__price','doctor__start_w',
-                                           'doctor__end_w','latitude', 'longitude', 'description')
+    markers = Markers.objects.all().values('doctor__username', 'doctor__specialty', 'doctor__price', 'doctor__start_w',
+                                           'doctor__end_w', 'latitude', 'longitude', 'description')
     # Pass the marker data to the template
-    return render(request, 'map.html', {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
+    return render(request, 'map.html',
+                  {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
 
 
 @patient_required(login_url='url')
@@ -224,7 +252,6 @@ def make_reservation(request):
                                                                            "full_name": full_name,
                                                                            "non_work": doctor.none_work})
 
-
             # Check if a reservation already exists for this doctor, patient, and date
             if Reservation.objects.filter(doctor=doctor, patient=patient, date=date).exists():
                 messages.error(request, f'You already did a reservation with Dr {doctor}')
@@ -232,7 +259,7 @@ def make_reservation(request):
                 storage.used = True
                 return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
                                                                            "full_name": full_name,
-                                                                           "non_work":doctor.none_work})
+                                                                           "non_work": doctor.none_work})
             # Get the highest priority reservation for this doctor and date
             highest_priority = Reservation.objects.filter(doctor=doctor, date=date).order_by('-priority').first()
 
@@ -243,7 +270,7 @@ def make_reservation(request):
                 storage.used = True
                 return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
                                                                            "full_name": full_name,
-                                                                           "non_work":doctor.none_work})
+                                                                           "non_work": doctor.none_work})
 
             # Create a new reservation instance and save it
             reservation = Reservation(doctor=doctor, patient=patient, date=date, description=description)
@@ -254,14 +281,14 @@ def make_reservation(request):
             storage.used = True
             return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
                                                                        "full_name": full_name,
-                                                                       "non_work":doctor.none_work})
+                                                                       "non_work": doctor.none_work})
         else:
             messages.error(request, 'Invalid form')
             storage = messages.get_messages(request)
             storage.used = True
     return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
                                                                "full_name": full_name,
-                                                               "non_work":doctor.none_work})
+                                                               "non_work": doctor.none_work})
 
 
 @doctor_required(login_url='login')
@@ -304,7 +331,7 @@ def docListView(request):
     )
     doctors_count = doctors.count()
     context = {'doctors': doctors, 'doctors_count': doctors_count}
-    return render(request, 'doc_list.html',context)
+    return render(request, 'doc_list.html', context)
 
 
 @patient_required(login_url='login')
@@ -328,4 +355,3 @@ def cancel_reservations(request, reservation_id):
         except Reservation.DoesNotExist:
             messages.error(request, 'Reservation not found.')
     return redirect('/my-reservations')  # Redirect to the reservation page
-
