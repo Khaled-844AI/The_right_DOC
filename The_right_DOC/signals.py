@@ -9,10 +9,6 @@ from django.utils import timezone
 
 @receiver(post_save, sender=AUTH_USER_MODEL)
 def create_token(sender, instance, created, **kwargs):
-
-
-
-    print(';nanananananana')
     if created:
         if instance.is_superuser:
             pass

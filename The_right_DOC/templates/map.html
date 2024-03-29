@@ -95,8 +95,10 @@ function filterMarkersBySpecialty(specialty) {
                 `<b>-Specialty: ${marker.specialty}</b><br>` +
                 `<b>-Price: ${marker.price}DA</b><br>` +
                 `<b>-Start at: ${marker.start}DA</b><br>` +
-                `<b>-End at: ${marker.end}DA</b><br>` +
-                `<a href="${url}" class="btn_map btn--fill ">Reserve now</a>`
+                `<b>-End at: ${marker.end}DA</b><br>`
+                {% if user.is_patient %}
+                +`<a href="${url}" class="btn_map btn--fill ">Reserve now</a>`
+                {% endif %}
             );
 
             return new mapboxgl.Marker()

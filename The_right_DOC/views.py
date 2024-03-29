@@ -172,10 +172,7 @@ class LoginView(auth_views.LoginView):
         if user.is_superuser:
             user.is_patient = True
         if user.is_authenticated:
-            print(user.is_patient)
-            print(user.is_doctor)
             if user.is_patient:
-                print('patient')
                 return reverse('map')
             elif user.is_doctor:
                 doctor = Doctor.objects.get(username=user.username)
@@ -218,16 +215,19 @@ def doctor_reservation(request, full_name):
                                                                "non_work": doctor.none_work})
 
 
-@patient_required(login_url='/login')
+@login_required(login_url='login')
 def map(request):
     markers = Markers.objects.all().values('doctor__username', 'doctor__specialty', 'doctor__price', 'doctor__start_w',
                                            'doctor__end_w', 'latitude', 'longitude', 'description')
-    # Pass the marker data to the template
+
+    user = request.user
+
     return render(request, 'map.html',
-                  {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES]})
+                  {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES],
+                   'user': user})
 
 
-@patient_required(login_url='url')
+@patient_required(login_url='login')
 def make_reservation(request):
     form = ReservationForm()
     full_name = request.POST['full_name']
