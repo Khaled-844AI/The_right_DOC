@@ -26,7 +26,7 @@
   <a href="{% url 'main-page' %}" class="logo-container">
     <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
   </a>
-<form action="{% url 'doc-list' %}" class="search-bar">
+<form action="{% url 'doc-list' %}" class="search-bar" id="search">
       <label for="search-bar"></label><input
       id="search-bar"
       type="text"
@@ -40,7 +40,7 @@
   </form>
     {% if user.is_authenticated%}
         {% if user.is_patient %}
-            <a href="{% url 'chk-reservations'%}" class="log-in nav-button-forg">Reservations</a>
+            <a href="{% url 'chk-reservations'%}" class="log-in nav-button-forg" id="reservations">Reservations</a>
         {% endif %}
 
         {% if user.is_doctor %}
@@ -50,7 +50,7 @@
         {% endif %}
         {% if user.is_patient or user.is_doctor%}
        <div class="flex-align">
-        <a href="{% url 'doc-list'%}" class="log-in nav-button">Doctors</a>
+        <a href="{% url 'doc-list'%}" class="log-in nav-button" id="doctors">Doctors</a>
             <a href="{% url 'logout'%}" class="register nav-button">Logout</a>
 
         </div>

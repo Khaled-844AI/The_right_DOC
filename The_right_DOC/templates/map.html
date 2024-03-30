@@ -7,6 +7,8 @@
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
 <style>
 #map { position: absolute; top: 8rem; bottom: 0; width: 85%; border-radius: 3rem;
@@ -52,6 +54,44 @@ body .mapboxgl-map {line-height: 1.4;}
         {% endfor %}
     </select>
 </div>
+<script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+<script>
+
+    const intro = introJs()
+
+    introJs().setOptions({
+      steps : [
+
+
+          {
+              element : '#map',
+              intro : "this is the map"
+          },
+          {
+            element : '#specialty-select',
+            intro : "here you can select the speciality that you're looking for"
+          },
+          {
+            element : '#doctors',
+            intro : "here you can see all the doctors on the website"
+          },
+          {
+            element : '#reservations',
+            intro : "here you can see all the reservations"
+          },
+          {
+            element : '#search',
+            intro : "here you can search for the doctors or speciality or locations directly"
+          }
+
+      ],
+      ShowProgress : true,
+      ShowBulets : true,
+      disableInteraction : false,
+
+    }).start();
+    introJs().addHints();
+</script>
 
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoibW91YWRraGFsZWQiLCJhIjoiY2x0NjYxZXh2MGE3NjJrbXkxM2h6aXZueiJ9.zmSuYIepl-PgUQygEE5Szw';

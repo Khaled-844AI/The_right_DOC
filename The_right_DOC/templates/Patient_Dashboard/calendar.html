@@ -8,6 +8,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+            <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
     <title>Calendar</title>
     <link rel="stylesheet" href="{% static 'calendar.css'%}" />
     <script
@@ -147,7 +149,7 @@
           <img src="{% static 'img/agenda-photo.png'%}" alt="" class="img" />
         </div>
 
-        <div class="calendar">
+        <div class="calendar" id="days">
           <div class="calendar-header">
             <span class="month-picker" id="month-picker">February</span>
             <div class="year-picker">
@@ -221,6 +223,36 @@
 </div>
 
     </div>
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+ <script >
+      const intro = introJs()
+
+introJs().setOptions({
+    steps : [
+        {
+            intro : 'Welcome to reservation page'
+        },
+        {
+            element : '#days',
+            intro : 'Here you can choose the date of your reservation besides the red ones'
+        },
+        {
+          element : '#reservation-button',
+          intro : 'form here you can see all your reservations',
+        }
+    ],
+    ShowProgress : true,
+    ShowBulets : true,
+    disableInteraction : false,
+
+}).start();
+introJs().addHints();
+
+
+
+
+    </script>
+
 
 
     <script>

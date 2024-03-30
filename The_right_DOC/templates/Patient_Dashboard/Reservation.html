@@ -10,6 +10,9 @@
   />
   <title>Calendar</title>
   <link rel="stylesheet" href="{% static 'reservations.css' %}" />
+  <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/intro.js/themes.css">
+
   <script
     type="module"
     src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -18,6 +21,8 @@
     nomodule
     src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
   ></script>
+ <style>
+
   <style>
 /* Hide the default scrollbar */
 .modern-table-container::-webkit-scrollbar {
@@ -117,6 +122,10 @@
       <h1 class="Reservations">Your reservations</h1>
 
       <!-- Modern Table Container with Scroll -->
+      <div class="modern-table-container" id="reservation-table">
+        <table class="modern-table">
+          <thead id="priorities">
+
       <div class="modern-table-container">
         <table class="modern-table">
           <thead>
@@ -140,6 +149,8 @@
               <td><form method="post" action="{% url 'cancel_reservation' reservation.id %}">
             {% csrf_token %}
             <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+            <button type="submit" class="cancel-button" id="cancel-button">Cancel</button>
+
             <button type="submit" class="cancel-button">Cancel</button>
         </form></td>
             </tr>
@@ -151,5 +162,41 @@
 
     </div>
   </div>
+  <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+  <script >
+    const intro = introJs()
+
+introJs().setOptions({
+  steps : [
+      {
+        intro : "Welcome to the reservation page"
+      },
+
+      {
+          element : '#reservation-table',
+          intro : "Here you can see all your reservations"
+      },
+      {
+        element : '#priorities',
+        intro : 'with all the priorities',
+      },
+      {
+        element : '#cancel-button',
+        intro : 'here you can cancel any reservation tou want',
+      },
+  ],
+  ShowProgress : true,
+  ShowBulets : true,
+  disableInteraction : false,
+
+}).start();
+introJs().addHints();
+
+
+
+
+  </script>
+
+
 </body>
 </html>
