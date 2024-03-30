@@ -1,0 +1,432 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Calendar</title>
+    <link rel="stylesheet" href="{% static 'calendar.css'%}" />
+      <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+          <style>
+
+        .inner-container {
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+        }
+
+        .calendar, .reservation-container {
+            backface-visibility: hidden;
+        }
+
+        .reservation-container {
+            transform: rotateY(-180deg);
+        }
+        .show-reservation {
+            transform: rotateY(180deg);
+        }
+
+.reservation-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reservation-table th,
+.reservation-table td {
+    padding: 10px;
+    border-bottom: 1px solid #100909;
+    text-align: left;
+}
+
+.reservation-table th {
+    background-color: #f8f4f4;
+}
+
+.reservation-table tbody tr:nth-child(even) {
+    background-color: #faf4f4;
+}
+
+.reservation-table tbody tr:hover {
+    background-color: #f5f1f1;
+}
+
+.reservation-table td:last-child {
+    text-transform: capitalize; /* Capitalize status text */
+}
+
+.non_work{
+    background: #f18080;
+    border-radius: 3rem;
+}
+.map {
+    height: 5rem;
+    width: 5rem;
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    border-radius: 50%; /* Make it a circle */
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    background-color: #f8fcf5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-icon {
+    width: 3rem;
+    height: 3rem;
+    display: inline-block;
+    background-image: url("{% static 'img/img_1.png' %}");
+    background-size: cover;
+}
+    </style>
+  </head>
+
+
+<body class="light">
+
+
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">
+                {{ message|safe }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+    <div class="container">
+      <div class="map">
+        <a href="{% url 'map' %}">
+            <ion-icon src="{% static 'img/img_1.png' %}" class="custom-icon"></ion-icon>
+
+        </a>
+
+    </div>
+      <div class="side-bar">
+
+        <ul class="side-bar-list">
+          <li class="list-elt">
+            <a href="#" id="calendar-button"
+              >Calendar
+              <div class="icon-container">
+                <ion-icon name="calendar-clear-outline" class="icon"></ion-icon>
+              </div>
+            </a>
+          </li>
+          <li class="list-elt">
+  <a href="{% url 'chk-reservations' %}" id="reservation-button">Reservation
+    <div class="icon-container">
+      <ion-icon name="pencil-outline" class="icon"></ion-icon>
+    </div>
+  </a>
+</li>
+
+          <li class="list-elt push"><a href="#">Logout</a></li>
+        </ul>
+      </div>
+      <div class="inner-container">
+
+        <!--  -->
+        <div class="img-box">
+          <img src="{% static 'img/agenda-photo.png'%}" alt="" class="img" />
+        </div>
+
+        <div class="calendar">
+          <div class="calendar-header">
+            <span class="month-picker" id="month-picker">February</span>
+            <div class="year-picker">
+              <span class="year-change" id="prev-year">
+                <pre><</pre>
+              </span>
+              <span id="year">2021</span>
+              <span class="year-change" id="next-year">
+                <pre>></pre>
+              </span>
+            </div>
+          </div>
+          <div class="calendar-body">
+            <div class="calendar-week-day">
+              <div>Sun</div>
+              <div>Mon</div>
+              <div>Tue</div>
+              <div>Wed</div>
+              <div>Thu</div>
+              <div>Fri</div>
+              <div>Sat</div>
+            </div>
+            <div class="calendar-days"></div>
+          </div>
+          <!-- <div class="calendar-footer">
+          <div class="toggle">
+            <span>Dark Mode</span>
+            <div class="dark-mode-switch">
+              <div class="dark-mode-switch-ident"></div>
+            </div>
+          </div>
+        </div> -->
+          <div class="month-list"></div>
+
+
+        </div>
+
+
+
+      </div>
+
+          <div id="overlay"></div>
+                    <div id="popup" class="popup">
+                <div class="popup-content">
+
+                     <button data-close-button class="close-button">&times;</button>
+                <h2 id="popup-info" class="popup-info">{{ h2_text }}</h2>
+    <form id="input" method="post" action="{% url 'reservation' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+{% for item in form %}
+    <div class="fieldWrapper {% if forloop.last or forloop.counter0 == form_length_minus_2 %}rightAligned{% endif %}">
+        <label for="{{ item.id_for_label }}"></label>
+        {{ item }}
+
+        {% if item.help_text %}
+            <small class="form-text text-muted">{{ item.help_text|safe }}</small>
+        {% endif %}
+    </div>
+    <br>
+{% endfor %}
+    <input type="hidden" id="reservationDate" name="reservation_date" value="" />
+    <input type="hidden" id="fullname1" name="full_name" value="" />
+
+    <button type="submit" name="submit" class="submit-btn">Save</button>
+</form>
+                </div>
+            </div>
+
+      <div class="reservation-container">
+
+</div>
+
+    </div>
+    <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+    <script >
+      const intro = introJs()
+
+introJs().setOptions({
+    steps : [
+
+        {
+            element : '#step-one',
+            intro : 'Please read this'
+        },
+        {
+          element : document.querySelector('.popup-content'),
+          intro : 'write heeere',
+        }
+    ],
+    ShowProgress : true,
+    ShowBulets : true,
+    disableInteraction : false,
+
+}).start();
+introJs().addHints();
+
+
+
+
+    </script>
+    <script>
+    const reservationButton = document.getElementById('reservation-button');
+    const calendarButton = document.getElementById('calendar-button');
+    let calendar = document.querySelector(".calendar");
+    const closeModalButtons = document.querySelectorAll('[data-close-button]')
+    const overlay = document.getElementById('overlay')
+    const month_names = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    isLeapYear = (year) => {
+      return (
+        (year % 4 === 0 && year % 100 !== 0 && year % 400 !== 0) ||
+        (year % 100 === 0 && year % 400 === 0)
+      );
+    };
+
+    getFebDays = (year) => {
+      return isLeapYear(year) ? 29 : 28;
+    };
+    let currDate = new Date();
+
+    let curr_month = { value: currDate.getMonth() };
+    let curr_year = { value: currDate.getFullYear() };
+    const active_year = { value: currDate.getFullYear() }
+
+    overlay.addEventListener('click', () => {
+      const modals = document.querySelectorAll('.popup.active')
+      modals.forEach(modal => {
+        close_popup(modal)
+      })
+    })
+
+    function show_popup(popup, date) {
+      if (popup == null) return;
+      popup.classList.add('active');
+      overlay.classList.add('active');
+
+      // Get the element with the class 'popup-date' inside the popup
+      const popupDateElement = popup.querySelector('.popup-info');
+      document.getElementById('reservationDate').value = date;
+      document.getElementById('fullname1').value = '{{ full_name }}';
+
+      // Set the inner text of the popup date element to the provided date
+      popupDateElement.textContent = date;
+
+    }
+
+    function close_popup(popup) {
+      if (popup == null) return
+      popup.classList.remove('active')
+      overlay.classList.remove('active')
+    }
+
+    closeModalButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const popup = button.closest('.popup')
+        close_popup(popup)
+      })
+    })
+
+    generateCalendar = (month, year) => {
+      let calendar_days = calendar.querySelector(".calendar-days");
+      let calendar_header_year = calendar.querySelector("#year");
+
+      let days_of_month = [
+        31,
+        getFebDays(year),
+        31,
+        30,
+        31,
+        30,
+        31,
+        31,
+        30,
+        31,
+        30,
+        31,
+      ];
+
+      const non_w = '{{ non_work }}'
+
+      calendar_days.innerHTML = "";
+
+      let currDate = new Date();
+      if (!month) month = currDate.getMonth();
+      if (!year) year = currDate.getFullYear();
+
+      let curr_month = `${month_names[month]}`;
+      month_picker.innerHTML = curr_month;
+      calendar_header_year.innerHTML = year;
+
+      // get first day of month
+
+      let first_day = new Date(year, month, 1);
+      let today = new Date();
+
+      for (let i = 0; i <= days_of_month[month] + first_day.getDay() - 1; i++) {
+        let day = document.createElement("div");
+        if (i >= first_day.getDay()) {
+          day.classList.add("calendar-day-hover");
+          day.innerHTML = i - first_day.getDay() + 1;
+
+          if (i >= today.getDate() && (i - first_day.getDay() + 1) >= today.getDate() && !non_w.split(',').includes(getDayName(i))){
+              day.addEventListener("click", (event) => {
+                  const popup = document.querySelector('.popup')
+                  show_popup(popup, `${year}-${month + 1}-${i - first_day.getDay() + 1}`);
+              });
+          }
+          if (non_w.split(',').includes(getDayName(i))) {
+                  day.classList.add("non_work");
+          }
+        } else {
+          day.classList.add("empty-day");
+        }
+        calendar_days.appendChild(day);
+      }
+    };
+
+    const getDayName = (index) => {
+       const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+       return daysOfWeek[index % 7];
+    };
+
+    let month_list = calendar.querySelector(".month-list");
+
+    let active_date = new Date();
+
+    month_names.forEach((e, index) => {
+      let month = document.createElement("div");
+      month.innerHTML = `<div data-month="${index}">${e}</div>`;
+      month.querySelector("div").onclick = (event) => {
+        month_list.classList.remove("show");
+        let selectedMonth = event.target.dataset.month; // Get the selected month index
+        if (curr_year.value > active_year.value)
+           generateCalendar(selectedMonth, curr_year.value);
+        else if(selectedMonth >= active_date.getMonth())
+          generateCalendar(selectedMonth, curr_year.value);
+      };
+      month_list.appendChild(month);
+    });
+
+
+    let month_picker = calendar.querySelector("#month-picker");
+
+    month_picker.onclick = () => {
+      month_list.classList.add("show");
+    };
+
+
+    generateCalendar(curr_month.value, curr_year.value);
+
+    document.querySelector("#prev-year").onclick = () => {
+
+      if (curr_year.value > active_year.value) {
+        --curr_year.value;
+        generateCalendar(curr_month.value, curr_year.value);
+      }
+    };
+
+    document.querySelector("#next-year").onclick = () => {
+      ++curr_year.value;
+      generateCalendar(curr_month.value, curr_year.value);
+    };
+
+
+    </script>
+  </body>
+</html>

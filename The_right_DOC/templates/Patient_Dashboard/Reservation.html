@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <title>Calendar</title>
+  <link rel="stylesheet" href="{% static 'reservations.css' %}" />
+  <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/intro.js/themes.css">
+  <script
+    type="module"
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+  ></script>
+  <script
+    nomodule
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+  ></script>
+ <style>
+/* Hide the default scrollbar */
+.modern-table-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Optional: Add scrollbar styling for webkit browsers */
+.modern-table-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+/* Adjust table height and enable scrolling */
+.modern-table-container {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto; /* Enable vertical scrolling */
+  border: 0.3rem solid #5ebdf1; /* Add border for visual separation */
+  border-radius: 2rem;
+  padding: 2rem;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+/* Additional styles for the table */
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgb(255, 255, 255);
+}
+
+.modern-table th,
+.modern-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd; /* Lighter border color */
+  text-align: left;
+}
+
+.modern-table th {
+  background-color: #cff8fb; /* Light gray background */
+  font-weight: 500; /* Medium font weight */
+}
+
+.modern-table tbody tr:nth-child(even) {
+  background-color: #f0f0f0; /* Even row background color */
+}
+
+.modern-table tbody tr:hover {
+  background-color: #e5e5e5; /* Hover row background color */
+}
+
+.modern-table td:last-child {
+  text-transform: capitalize;
+  /* Capitalize status text */
+}
+
+.modern-table-container .cancel-button{
+    padding: 0.5rem 1.6rem;
+    border-radius: 1rem;
+    background-color: #f96666;
+    text-decoration: none;
+    font-weight: 600;
+    color: #000000;
+}
+
+
+  </style>
+</head>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">
+                {{ message|safe }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<body class="light">
+  <div class="container">
+    <div class="side-bar">
+      <ul class="side-bar-list">
+        <li class="list-elt">
+
+        </li>
+        <li class="list-elt">
+          <a href="#" id="reservation-button">
+            Reservations
+            <div class="icon-container">
+              <ion-icon name="pencil-outline" class="icon"></ion-icon>
+            </div>
+          </a>
+        </li>
+        <li class="list-elt push"><a href="#">Logout</a></li>
+      </ul>
+    </div>
+    <div class="inner-container">
+      <h1 class="Reservations">Your reservations</h1>
+
+      <!-- Modern Table Container with Scroll -->
+      <div class="modern-table-container" id="reservation-table">
+        <table class="modern-table">
+          <thead id="priorities">
+            <tr>
+              <th>Doctor</th>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Priority</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for reservation in reservations %}
+            <tr>
+              <td>{{ reservation.doctor}}</td>
+              <td>{{ reservation.patient }}</td>
+              <td>{{ reservation.date }}</td>
+              <td>{{ reservation.description }}</td>
+              <td>{{ reservation.priority }}</td>
+              <td><form method="post" action="{% url 'cancel_reservation' reservation.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+            <button type="submit" class="cancel-button" id="cancel-button">Cancel</button>
+        </form></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <!-- End Modern Table Container -->
+
+    </div>
+  </div>
+  <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+  <script >
+    const intro = introJs()
+
+introJs().setOptions({
+  steps : [
+      {
+        intro : "Welcome to the reservation page"
+      },
+      
+      {
+          element : '#reservation-table',
+          intro : "Here you can see all your reservations"
+      },
+      {
+        element : '#priorities',
+        intro : 'with all the priorities',
+      },
+      {
+        element : '#cancel-button',
+        intro : 'here you can cancel any reservation tou want',
+      },
+  ],
+  ShowProgress : true,
+  ShowBulets : true,
+  disableInteraction : false,
+
+}).start();
+introJs().addHints();
+
+
+
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <title>Calendar</title>
+  <link rel="stylesheet" href="{% static 'Doctor_Dash.css' %}" />
+  <script
+    type="module"
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+  ></script>
+  <script
+    nomodule
+    src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+  ></script>
+  <style>
+
+
+    .reservation-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .reservation-table th,
+    .reservation-table td {
+      padding: 10px;
+      border-bottom: 1px solid #100909;
+      text-align: left;
+    }
+
+    .reservation-table th {
+      background-color: #f8f4f4;
+    }
+
+    .reservation-table tbody tr:nth-child(even) {
+      background-color: #faf4f4;
+    }
+
+    .reservation-table tbody tr:hover {
+      background-color: #f5f1f1;
+    }
+
+    .reservation-table td:last-child {
+      text-transform: capitalize;
+      /* Capitalize status text */
+    }
+
+
+    .profile-info {
+      flex: 1;
+      margin-right: 20px;
+    }
+
+    .profile-info h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .profile-info p {
+      font-size: 16px;
+      color: #666;
+    }
+
+    .profile-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      background-color: #ccc;
+    }
+
+    .profile-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 3rem;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+      max-width: 40%;
+      margin: 0 auto;
+      display: table-column;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-cont{
+      margin-top: 1rem;
+    }
+
+    input[type="time"],
+    input[type="number"],
+    input[type="day"] { /* Use 'day' for the day field (which doesn't exist, so we're simulating it here) */
+      width: 100%;
+      padding: 1rem;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 2rem;
+      box-sizing: border-box; /* Ensure padding and border are included in the width */
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 2rem 4rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      margin-left: 13rem;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+  </style>
+</head>
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">
+                {{ message|safe }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+<body class="light">
+  <div class="container">
+    <div class="side-bar">
+      <ul class="side-bar-list">
+      
+        <li class="list-elt">
+          <a href="#" id="calendar-button">
+            Profile
+            <div class="icon-container">
+              <ion-icon name="calendar-clear-outline" class="icon"></ion-icon>
+            </div>
+          </a>
+        </li>
+        <li class="list-elt">
+          <a href="{% url "manage" %}" id="reservation-button">
+            Reservations
+            <div class="icon-container">
+              <ion-icon name="pencil-outline" class="icon"></ion-icon>
+            </div>
+          </a>
+        </li>
+        <li class="list-elt push"><a href="{% url 'logout' %}">Logout</a></li>
+      </ul>
+    </div>
+    <div class="inner-container">
+      <!-- Profile Section -->
+
+        <div class="profile-info">
+          <h1>Dr. {{ doctor.username }}</h1>
+          <br>
+          <p>Email: {{ doctor.email }}</p>
+          <br>
+          <p>Location: {{ doctor.office_location }}</p>
+          <br>
+          <p>specialty: {{ doctor.specialty }}</p>
+
+        </div>
+
+        	<form class="profile-form" method="POST" action="">
+            {% csrf_token %}
+          <label>Start work</label>
+          <input type="time" placeholder="start work" name="start_w" required>
+          <label>End work</label>
+          <input type="time" placeholder="end work" name="end_w" required>
+          <input type="number" placeholder="max patients" name="max_pat_day" required>
+          <label>Rest days :</label><br><br>
+    <input type="checkbox" name="none_work[]" value="Sunday"> Sunday<br>
+    <input type="checkbox" name="none_work[]" value="Monday"> Monday<br>
+    <input type="checkbox" name="none_work[]" value="Tuesday"> Tuesday<br>
+    <input type="checkbox" name="none_work[]" value="Wednesday"> Wednesday<br>
+    <input type="checkbox" name="none_work[]" value="Thursday"> Thursday<br>
+    <input type="checkbox" name="none_work[]" value="Friday"> Friday<br>
+    <input type="checkbox" name="none_work[]" value="Saturday"> Saturday<br>
+    <input type="hidden" id="rest_days" name="rest_days">
+          <button type="submit">Save</button>
+        </form>
+      <!-- End Profile Section -->
+    </div>
+  </div>
+  <script>
+function submitForm() {
+    var restDays = document.querySelectorAll('input[name="none_work[]"]:checked');
+    var selectedDays = [];
+    restDays.forEach(function(day) {
+        selectedDays.push(day.value);
+    });
+    document.getElementById("rest_days").value = selectedDays.join(',');
+    document.querySelector('form').submit();
+}
+</script>
+</body>
+</html>
