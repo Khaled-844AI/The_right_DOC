@@ -4,12 +4,15 @@
 <head>
 <meta charset="utf-8">
 <title>Display a globe on a webpage</title>
+
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'style.css' %}" />
-    <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+<link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
+<link rel="stylesheet" href="https://unpkg.com/intro.js/themes.css">
 
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
+
 <style>
 #map { position: absolute; top: 8rem; bottom: 0; width: 85%; border-radius: 3rem;
     margin-left: 10rem; margin-right: 10rem; margin-bottom: 10rem; margin-top: 2rem;}
@@ -38,6 +41,8 @@ body .mapboxgl-map {line-height: 1.4;}
 .specialty-button select::-webkit-scrollbar {
     display: none;
 }
+body { margin: 0; padding: 0; }
+
 </style>
 </head>
 <body>
@@ -47,8 +52,8 @@ body .mapboxgl-map {line-height: 1.4;}
 <div id="map"></div>
 
 <div class="specialty-button">
-    <select id="specialty-select">
-        <option value="">Select Specialty</option>
+    <select id="specialty-select" >
+        <option value="" >Select Specialty</option>
         {% for specialty in SPECIALTY_CHOICES %}
             <option value="{{ specialty }}">{{ specialty }}</option>
         {% endfor %}
@@ -93,14 +98,16 @@ body .mapboxgl-map {line-height: 1.4;}
     introJs().addHints();
 </script>
 
+
+
+
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoibW91YWRraGFsZWQiLCJhIjoiY2x0NjYxZXh2MGE3NjJrbXkxM2h6aXZueiJ9.zmSuYIepl-PgUQygEE5Szw';
 const map = new mapboxgl.Map({
     container: 'map',
-    // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
     style: 'mapbox://styles/mapbox/satellite-streets-v12',
-    zoom: 12,
-    center: [-0.634160,35.192503],
+    zoom: 5,
+    center: [3.328857,32.426340],
     projection: 'globe'
 });
 
@@ -137,7 +144,7 @@ function filterMarkersBySpecialty(specialty) {
                 `<b>-Start at: ${marker.start}DA</b><br>` +
                 `<b>-End at: ${marker.end}DA</b><br>`
                 {% if user.is_patient %}
-                +`<a href="${url}" class="btn_map btn--fill ">Reserve now</a>`
+                 +`<a href="${url}" class="btn_map btn--fill ">Reserve now</a>`
                 {% endif %}
             );
 
@@ -147,6 +154,17 @@ function filterMarkersBySpecialty(specialty) {
                 .addTo(map);
         });
 }
+ map.addControl(
+        new mapboxgl.GeolocateControl({
+            positionOptions: {
+                enableHighAccuracy: true
+            },
+            // When active the map will receive updates to the device's location as it changes.
+            trackUserLocation: true,
+            // Draw an arrow next to the location dot to indicate which direction the device is heading.
+            showUserHeading: true
+        })
+    );
 
 document.getElementById('specialty-select').addEventListener('change', function() {
     const selectedSpecialty = this.value;
@@ -154,6 +172,11 @@ document.getElementById('specialty-select').addEventListener('change', function(
 });
 
 filterMarkersBySpecialty('');
+
+</script>
+<script>
+
+
 </script>
 
 </body>
