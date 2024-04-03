@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="{% static 'reservations.css' %}" />
   <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
   <link rel="stylesheet" href="https://unpkg.com/intro.js/themes.css">
-
   <script
     type="module"
     src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -123,10 +122,6 @@
       <div class="modern-table-container" id="reservation-table">
         <table class="modern-table">
           <thead id="priorities">
-
-      <div class="modern-table-container">
-        <table class="modern-table">
-          <thead>
             <tr>
               <th>Doctor</th>
               <th>Patient</th>
@@ -148,8 +143,6 @@
             {% csrf_token %}
             <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
             <button type="submit" class="cancel-button" id="cancel-button">Cancel</button>
-
-            <button type="submit" class="cancel-button">Cancel</button>
         </form></td>
             </tr>
           {% endfor %}
@@ -157,11 +150,9 @@
         </table>
       </div>
       <!-- End Modern Table Container -->
-    </div>
- </div>
-  </div>
 
-      <div>
+    </div>
+  </div>
   <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
   <script >
     const intro = introJs()
@@ -196,7 +187,6 @@ introJs().addHints();
 
 
   </script>
-
 
 </body>
 </html>
