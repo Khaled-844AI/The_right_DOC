@@ -21,7 +21,8 @@ from The_right_DOC.form import SPECIALTY_CHOICES
 
 
 def main_page(request):
-    return render(request, 'index.html')
+    user = request.user
+    return render(request, 'index.html' , {'user': user})
 
 
 def verify_email(request, username):
