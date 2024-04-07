@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Calendar</title>
+    <link rel="stylesheet" href="{% static 'Doctor_Dash.css' %}" />
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+      <style>
+          /* Hide the default scrollbar */
+.modern-table-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Optional: Add scrollbar styling for webkit browsers */
+.modern-table-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+/* Adjust table height and enable scrolling */
+.modern-table-container {
+    margin-top: 1rem;
+  overflow-y: auto; /* Enable vertical scrolling */
+  border-radius: 2rem;
+  padding: 2rem;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+/* Additional styles for the table */
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgb(255, 255, 255);
+}
+
+.modern-table th,
+.modern-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd; /* Lighter border color */
+  text-align: left;
+}
+
+.modern-table th {
+  background-color: #dae4e5; /* Light gray background */
+  font-weight: 500; /* Medium font weight */
+}
+
+.modern-table tbody tr:nth-child(even) {
+  background-color: #f0f0f0; /* Even row background color */
+}
+
+.modern-table tbody tr:hover {
+  background-color: #e5e5e5; /* Hover row background color */
+}
+
+.modern-table td:last-child {
+  text-transform: capitalize;
+  /* Capitalize status text */
+}
+
+.modern-table-container .cancel-button{
+    padding: 0.5rem 1.6rem;
+    border-radius: 1rem;
+    background-color: #e0d9d9;
+    text-decoration: none;
+    font-weight: 600;
+    color: #000000;
+}
+
+
+.inner-container2 {
+  width: 100rem;
+  height: 55rem;
+  border-radius: 3rem;
+  background-color: white;
+  box-shadow: 0px 10px 10px 5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+
+}
+      </style>
+  </head>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="message {{ message.tags }}">
+                {{ message|safe }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+  <body class="light">
+    <div class="container">
+      <aside>
+       <a href="{% url 'main-page' %}" class="logo flex-center">
+             <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
+        </a>
+        <div class="side-bar">
+          <a href="{% url 'doctor-profile' doctor.username%}" class="side-bar-links">
+            <span class="flex-center"
+              ><ion-icon name="person-circle-outline" class="icon"></ion-icon
+            ></span>
+            <h3>Profile</h3>
+          </a>
+
+          <a  href="{% url 'see_appointment'%}" class="side-bar-links active">
+            <span class="flex-center"
+              ><ion-icon name="calendar-outline" class="icon"></ion-icon
+            ></span>
+            <h3>Reservation</h3>
+          </a>
+
+          <a href="{% url 'logout' %}" class="side-bar-links push ">
+            <span class="flex-center"
+              ><ion-icon name="exit-outline" class="icon"></ion-icon
+            ></span>
+            <h3>Se déconnecter</h3>
+          </a>
+        </div>
+      </aside>
+
+      <div class="heading">Reservations</div>
+      <div class="inner-container2">
+                <div class="modern-table-container" id="reservation-table">
+        <table class="modern-table">
+          <thead id="priorities">
+            <tr>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Priority</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for reservation in reservations %}
+            <tr>
+              <td>{{ reservation.patient }}</td>
+              <td>{{ reservation.date }}</td>
+              <td>{{ reservation.description }}</td>
+              <td>{{ reservation.priority }}</td>
+              <td>
+                  <form method="post" action="{% url 'done_reservation' reservation.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+            <button type="submit" class="cancel-button" id="cancel-button">Done</button>
+                  </form>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      </div>
+
+    </div>
+
+  </body>
+</html>

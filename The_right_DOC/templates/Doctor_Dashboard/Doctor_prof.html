@@ -35,14 +35,14 @@
              <img src="{% static 'img/logo.png' %}" alt="logo of the website" class="logo-img" />
         </a>
         <div class="side-bar">
-          <a href="#" class="side-bar-links active">
+          <a href="{% url 'doctor-profile' doctor.username%}" class="side-bar-links active">
             <span class="flex-center"
               ><ion-icon name="person-circle-outline" class="icon"></ion-icon
             ></span>
             <h3>Profile</h3>
           </a>
 
-          <a href="#" class="side-bar-links ">
+          <a  href="{% url 'see_appointment'%}" class="side-bar-links">
             <span class="flex-center"
               ><ion-icon name="calendar-outline" class="icon"></ion-icon
             ></span>
@@ -153,6 +153,5 @@
 
       <!-- End Profile Section -->
     </div>
-    <script></script>
   </body>
 </html>

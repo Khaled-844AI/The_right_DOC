@@ -1,14 +1,11 @@
-import json
 
-from django.contrib.auth.hashers import check_password, make_password
 from django.db.models import Q
-from django.http import HttpResponse
 from django.urls import reverse, reverse_lazy
 
 from django.utils import timezone
 from django.contrib.auth import views as auth_views, logout
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import  login, get_user_model
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView
@@ -188,7 +185,6 @@ class LoginView(auth_views.LoginView):
         return reverse('login')
 
     def form_invalid(self, form):
-        # Add a message for invalid login (incorrect username or password)
         messages.error(self.request, 'Invalid username or password. Please try again.')
         return super().form_invalid(form)
 
@@ -356,3 +352,28 @@ def cancel_reservations(request, reservation_id):
         except Reservation.DoesNotExist:
             messages.error(request, 'Reservation not found.')
     return redirect('/my-reservations')  # Redirect to the reservation page
+
+
+@doctor_required(login_url='login')
+def done_reservations(request, reservation_id):
+    if request.method == 'POST':
+        try:
+            reservation = Reservation.objects.get(id=reservation_id)
+            reservation.delete()
+
+            doctor = Doctor.objects.get(username=request.user.username)
+
+            highest_priority = Reservation.objects.filter(doctor=doctor, date=reservation.date).order_by('-priority').first()
+            messages.success(request, f'Reservation Done successfully. next patient with ticket number {highest_priority}')
+        except Reservation.DoesNotExist:
+            messages.error(request, 'Reservation not found.')
+    return redirect('/appointment')
+
+
+@doctor_required(login_url="/login")
+def see_apointement(request):
+    user = request.user
+    doctor = Doctor.objects.get(username=user.username)
+    reservations = Reservation.objects.filter(doctor=doctor,date=timezone.now().date())
+    return render(request,'Doctor_Dashboard/Reservation.html', {'doctor': doctor ,
+                                                                'reservations': reservations})
