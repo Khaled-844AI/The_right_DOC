@@ -374,6 +374,7 @@ def done_reservations(request, reservation_id):
 def see_apointement(request):
     user = request.user
     doctor = Doctor.objects.get(username=user.username)
+    print(timezone.now().date())
     reservations = Reservation.objects.filter(doctor=doctor,date=timezone.now().date())
     return render(request,'Doctor_Dashboard/Reservation.html', {'doctor': doctor ,
                                                                 'reservations': reservations})

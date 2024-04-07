@@ -141,8 +141,8 @@ function filterMarkersBySpecialty(specialty) {
                 `<h2>Dr. ${marker.fullName}</h2>` +
                 `<b>-Specialty: ${marker.specialty}</b><br>` +
                 `<b>-Price: ${marker.price}DA</b><br>` +
-                `<b>-Start at: ${marker.start}DA</b><br>` +
-                `<b>-End at: ${marker.end}DA</b><br>`
+                `<b>-Start at: ${marker.start}</b><br>` +
+                `<b>-End at: ${marker.end}</b><br>`
                 {% if user.is_patient %}
                  +`<a href="${url}" class="btn_map btn--fill ">Reserve now</a>`
                 {% endif %}
