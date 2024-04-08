@@ -81,6 +81,10 @@ class Reservation(models.Model):
     description = models.CharField(max_length=150 , default='None')
     priority = models.IntegerField(default=1)
 
+
+    def get_highest(self):
+        return Reservation.objects.filter(doctor=self.doctor, date=self.date).order_by('-priority').first().priority
+
     def set_date(self, date):
         self.date = date
 

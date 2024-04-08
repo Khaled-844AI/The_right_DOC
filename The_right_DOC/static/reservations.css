@@ -66,6 +66,98 @@ body {
   );
 }
 
+#overlay {
+  position: fixed;
+  opacity: 0;
+  transition: 200ms ease-in-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, .5);
+  pointer-events: none;
+}
+
+#overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+.popup.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+.popup {
+  position: fixed;
+  height: 40rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 200ms ease-in-out;
+  border: 2px solid black;
+  border-radius: 10px;
+  z-index: 10;
+  background-color: white;
+  width: 40rem;
+  max-width: 100%;
+}
+
+
+.popup .popup-date {
+  border-radius: 2rem;
+  height: auto;  /* Change height to auto to allow for dynamic height based on content */
+  width: 30rem;
+  margin-right: 6rem;
+  margin-left: 5rem;
+  background: #99effa;
+  padding: 1rem; /* Add padding to create space for the textarea */
+  position: relative; /* Ensure proper positioning of the textarea */
+  overflow: hidden;
+  resize: none; /* Prevent resizing */
+}
+
+.popup .popup-date textarea {
+  width: inherit; /* Use calc to subtract padding from the width */
+  height: inherit; /* Use calc to subtract padding from the height */
+  box-sizing: border-box; /* Ensure that padding is included in the width and height */
+  border: none; /* Remove border to match the popup-date styling */
+  background: transparent; /* Set background to transparent to match the popup-date styling */
+  margin-right: 15rem;
+  top: 1rem; /* Adjust top and left to position textarea within the popup-date field */
+  left: 1rem;
+  overflow: auto;
+
+}
+
+
+.popup-content .submit-btn{
+  border-radius: 2rem;
+  height: 5rem;
+  width: 10rem;
+  background-color: #49b2ec;
+  margin-left: 14rem;
+  margin-right: 10rem;
+
+}
+
+.popup-content .popup-date::placeholder {
+  color: #000000;
+}
+
+.popup-content .popup-info{
+  margin-bottom: 2rem;
+  letter-spacing: 1rem;
+  margin-left: 10rem;
+}
+
+.popup .popup-content .close-button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 3rem;
+  font-weight: bold;
+  margin-left: 1rem;
+}
+
 body {
   font-size: 1.6rem;
   display: flex;

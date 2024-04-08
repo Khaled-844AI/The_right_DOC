@@ -84,6 +84,15 @@
     font-weight: 600;
     color: #000000;
 }
+.modern-table-container .ticket-button{
+    padding: 0.5rem 1.6rem;
+    border-radius: 1rem;
+    margin-left: 2rem;
+    background-color: #a9d8f3;
+    text-decoration: none;
+    font-weight: 600;
+    color: #000000;
+}
 .map {
     height: 5rem;
     width: 5rem;
@@ -156,7 +165,8 @@
               <th>Patient</th>
               <th>Date</th>
               <th>Description</th>
-              <th>Priority</th>
+              <th>your ticket</th>
+              <th>current ticket</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -168,16 +178,22 @@
               <td>{{ reservation.date }}</td>
               <td>{{ reservation.description }}</td>
               <td>{{ reservation.priority }}</td>
+              <td>{{ reservation.get_highest }}</td>
+
               <td><form method="post" action="{% url 'cancel_reservation' reservation.id %}">
             {% csrf_token %}
             <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
             <button type="submit" class="cancel-button" id="cancel-button">Cancel</button>
-        </form></td>
+
+        </form>
+              </td>
             </tr>
           {% endfor %}
           </tbody>
         </table>
+
       </div>
+
       <!-- End Modern Table Container -->
 
     </div>

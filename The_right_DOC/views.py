@@ -1,3 +1,4 @@
+from collections import defaultdict
 
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
@@ -15,6 +16,7 @@ from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm
 from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
+
 
 
 def main_page(request):
@@ -340,7 +342,6 @@ def check_reservations(request):
     reservations = Reservation.objects.filter(patient=patient, date__gte=current_date)
 
     return render(request, 'Patient_Dashboard/Reservation.html', {'reservations': reservations})
-
 
 @patient_required(login_url='login')
 def cancel_reservations(request, reservation_id):
