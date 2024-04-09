@@ -83,8 +83,11 @@ class Reservation(models.Model):
 
 
     def get_highest(self):
-        return Reservation.objects.filter(doctor=self.doctor, date=self.date).order_by('-priority').first().priority
-
+        current_rv = Reservation.objects.filter(doctor=self.doctor, date=self.date).order_by('-priority').last()
+        if current_rv:
+            return current_rv.priority
+        else:
+            return
     def set_date(self, date):
         self.date = date
 

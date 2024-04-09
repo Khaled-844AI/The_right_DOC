@@ -41,7 +41,6 @@ def verify_email(request, username):
                 user.is_active = True
                 user.save()
                 user.save()
-                messages.success(request, "Account activated successfully!! You can Login.")
                 return redirect("login")
 
             # expired token
@@ -317,6 +316,7 @@ def doctor_profile(request, pk):
     return render(request, "Doctor_Dashboard/Doctor_prof.html", context)
 
 
+@login_required(login_url='login')
 def logoutUser(request):
     logout(request)
     return redirect('main-page')
@@ -363,9 +363,12 @@ def done_reservations(request, reservation_id):
             reservation.delete()
 
             doctor = Doctor.objects.get(username=request.user.username)
+            next_ticket = reservation.get_highest()
 
-            highest_priority = Reservation.objects.filter(doctor=doctor, date=reservation.date).order_by('-priority').first()
-            messages.success(request, f'Reservation Done successfully. next patient with ticket number {highest_priority}')
+            if next_ticket:
+                messages.success(request, f'Reservation Done successfully. next patient with ticket number {next_ticket}')
+            else:
+                messages.error(request, f'no current reservation')
         except Reservation.DoesNotExist:
             messages.error(request, 'Reservation not found.')
     return redirect('/appointment')
