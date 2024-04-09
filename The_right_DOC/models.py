@@ -89,7 +89,7 @@ class Reservation(models.Model):
         self.date = date
 
     def save(self, *args, **kwargs):
-        if not self.pk:  # If the instance is new
+        if not self.pk:
             if Reservation.objects.filter(doctor=self.doctor, patient=self.patient, date=self.date).exists():
                 raise ValidationError('You already did a reservation')
 
