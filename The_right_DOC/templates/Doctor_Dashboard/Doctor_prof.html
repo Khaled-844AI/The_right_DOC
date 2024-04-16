@@ -49,11 +49,18 @@
             <h3>Reservations</h3>
           </a>
 
+            <a  href="{% url 'see_statistics'%}" class="side-bar-links">
+            <span class="flex-center"
+              ><ion-icon name="calendar-outline" class="icon"></ion-icon
+            ></span>
+            <h3>Statistics</h3>
+          </a>
+
           <a href="{% url 'logout' %}" class="side-bar-links push ">
             <span class="flex-center"
               ><ion-icon name="exit-outline" class="icon"></ion-icon
             ></span>
-            <h3>Se déconnecter</h3>
+            <h3>logout</h3>
           </a>
         </div>
       </aside>

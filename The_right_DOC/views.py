@@ -1,4 +1,5 @@
-from collections import defaultdict
+import calendar
+from datetime import datetime
 
 from django.db.models import Q
 from django.urls import reverse, reverse_lazy
@@ -13,10 +14,10 @@ from django.views.generic import CreateView
 
 from The_right_DOC.decorators import patient_required, doctor_required
 from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, ReservationForm, LoginForm
-from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User
+from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User, Successful_reservations
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
-
+import plotly.express as px
 
 
 def main_page(request):
@@ -360,10 +361,13 @@ def done_reservations(request, reservation_id):
     if request.method == 'POST':
         try:
             reservation = Reservation.objects.get(id=reservation_id)
-            reservation.delete()
 
-            doctor = Doctor.objects.get(username=request.user.username)
+            res = Successful_reservations(date=reservation.date, num_patients=0)
+            res.save()
+
             next_ticket = reservation.get_highest()
+            reservation.delete()
+            doctor = Doctor.objects.get(username=request.user.username)
 
             if next_ticket:
                 messages.success(request, f'Reservation Done successfully. next patient with ticket number {next_ticket}')
@@ -382,3 +386,35 @@ def see_apointement(request):
     reservations = Reservation.objects.filter(doctor=doctor,date=timezone.now().date())
     return render(request,'Doctor_Dashboard/Reservation.html', {'doctor': doctor ,
                                                                 'reservations': reservations})
+
+
+@doctor_required(login_url='login')
+def see_statistics(request):
+    user = request.user
+    doctor = Doctor.objects.get(username=user.username)
+
+    # Get all successful reservations for the current month
+    current_date = datetime.now()
+    res = Successful_reservations.objects.filter(
+        date__year=current_date.year,
+        date__month=current_date.month
+    )
+
+    days_in_month = calendar.monthrange(current_date.year, current_date.month)[1]
+    reservations_by_day = {day: 0 for day in range(1, days_in_month + 1)}
+
+    for r in res:
+        reservations_by_day[r.date.day] = r.num_patients
+
+    x_values = list(reservations_by_day.keys())
+    y_values = list(reservations_by_day.values())
+
+    fig = px.line(x=x_values,
+                  y=y_values,
+                  labels={'x': 'days',
+                          'y': 'patients'
+                          })
+
+    chart = fig.to_html()
+
+    return render(request, "Doctor_Dashboard/Statistics.html", {'doctor': doctor, 'chart': chart})

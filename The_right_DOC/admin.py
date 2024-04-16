@@ -32,9 +32,17 @@ class ReservationAdmin(admin.ModelAdmin):
         obj.save()
 
 
+class Succ_ReservationAdmin(admin.ModelAdmin):
+    list_display = ("date", "num_patients")
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
+
+
 admin.site.register(User, BaseUserAdmin)
 admin.site.register(Reservation, ReservationAdmin)
 admin.site.register(Doctor, DoctorAdmin)
 admin.site.register(OtpToken, OtpTokenAdmin)
 admin.site.register(Patient, PatientAdmin)
 admin.site.register(Markers, MarkersAdmin)
+admin.site.register(Successful_reservations, Succ_ReservationAdmin)

@@ -116,13 +116,14 @@
             <h3>Profile</h3>
           </a>
 
-          <a  href="{% url 'see_appointment'%}" class="side-bar-links active">
+          <a  href="{% url 'see_appointment'%}" class="side-bar-links">
             <span class="flex-center"
               ><ion-icon name="calendar-outline" class="icon"></ion-icon
             ></span>
-            <h3>Reservations</h3>
+            <h3>Statistics</h3>
           </a>
-            <a  href="{% url 'see_statistics'%}" class="side-bar-links">
+
+            <a  href="{% url 'see_statistics'%}" class="side-bar-links active">
             <span class="flex-center"
               ><ion-icon name="calendar-outline" class="icon"></ion-icon
             ></span>
@@ -138,38 +139,10 @@
         </div>
       </aside>
 
-      <div class="heading">Reservations</div>
+      <div class="heading">Statistics</div>
       <div class="inner-container2">
-                <div class="modern-table-container" id="reservation-table">
-        <table class="modern-table">
-          <thead id="priorities">
-            <tr>
-              <th>Patient</th>
-              <th>Date</th>
-              <th>Description</th>
-              <th>Priority</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-          {% for reservation in reservations %}
-            <tr>
-              <td>{{ reservation.patient }}</td>
-              <td>{{ reservation.date }}</td>
-              <td>{{ reservation.description }}</td>
-              <td>{{ reservation.priority }}</td>
-              <td>
-                  <form method="post" action="{% url 'done_reservation' reservation.id %}">
-            {% csrf_token %}
-            <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
-            <button type="submit" class="cancel-button" id="cancel-button">Done</button>
-                  </form>
-              </td>
-            </tr>
-          {% endfor %}
-          </tbody>
-        </table>
-      </div>
+
+           {{ chart|safe }}
 
       </div>
 
