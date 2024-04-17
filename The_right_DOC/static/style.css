@@ -224,6 +224,75 @@ a:visited {
   max-width: 190rem;
 }
 
+@media (min-width: 992px) {
+
+
+  .nav-bar {
+    justify-content: space-between;
+  }
+
+  nav ul {
+    display: flex;
+  }
+}
+
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .menu.icon {
+    display: none;
+  }
+
+  nav ul {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+
+@media (max-width: 767px) {
+  .menu.icon {
+    display: block;
+    cursor: pointer;
+  }
+
+  nav ul {
+    flex-direction: column;
+    width: 100%;
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    top: 100%;
+    left: 0;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  }
+
+  nav ul li {
+    text-align: center;
+    width: 100%;
+  }
+
+  nav ul li a {
+    padding: 10px 20px;
+    display: block;
+    color: #333;
+  }
+
+  nav ul.open {
+    display: block;
+  }
+}
+
+@media (max-width: 575px) {
+  .nav-bar {
+    padding: 10px 20px;
+  }
+
+  .logo-img {
+    width: 15rem;
+  }
+}
+
 .log-in:link,
 .log-in:visited,
 .register:link,
@@ -272,17 +341,17 @@ a:visited {
 }
 
 .search-bar {
-  width: 100%;  /* Keeps the bar spanning the full width of its container */
+  width: 100%;
   max-width: 50rem;
   height: 6rem;
   background: rgba(255, 255, 255, 0.2);
-  /* Set display to block to enable centering */
+
   display: inherit;
   align-items: center;
   border-radius: 60px;
   padding: 1rem 2rem;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  /* Margin: 0 auto; centers the element horizontally within its container */
+
   margin: 0 auto;
 }
 
