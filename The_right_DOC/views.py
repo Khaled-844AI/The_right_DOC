@@ -17,7 +17,7 @@ from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm
 from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User, Successful_reservations
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
-
+import plotly.express as px
 
 
 def main_page(request):
