@@ -417,4 +417,12 @@ def see_statistics(request):
 
     chart = fig.to_html()
 
-    return render(request, "Doctor_Dashboard/Statistics.html", {'doctor': doctor, 'chart': chart})
+    months = ["January", "February", "March", "April", "May", "June", "July",
+              "August", "September", "October", "November", "December"]
+    current_month = ''
+    for i in range(1, 13):
+        if i == current_date.month:
+            current_month = months[i - 1]
+
+    return render(request, "Doctor_Dashboard/Statistics.html", {'doctor': doctor, 'chart': chart,
+                                                                'month':current_month})

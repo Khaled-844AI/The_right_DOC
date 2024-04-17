@@ -86,10 +86,13 @@
 .inner-container2 {
   width: 100rem;
   height: 55rem;
+  justify-content: center;
+  align-items: center;
   border-radius: 3rem;
   background-color: white;
   box-shadow: 0px 10px 10px 5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
+    padding: 2rem;
 
 }
       </style>
@@ -131,7 +134,7 @@
             <h3>Statistics</h3>
           </a>
 
-          <a href="{% url 'logout' %}" class="side-bar-links push ">
+          <a href="{% url 'logout' %}" class="side-bar-links push">
             <span class="flex-center"
               ><ion-icon name="exit-outline" class="icon"></ion-icon
             ></span>
@@ -139,12 +142,13 @@
           </a>
         </div>
       </aside>
-      <div class="heading">Statistics</div>
+      <div class="heading">Statistics for {{ month }}</div>
       <div class="inner-container2">
 
            {{ chart|safe }}
-
       </div>
+
+
 
     </div>
 
