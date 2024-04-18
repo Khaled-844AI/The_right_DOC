@@ -18,6 +18,32 @@
       nomodule
       src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
     ></script>
+          <style>
+
+.inner-container2 {
+
+  width: 100rem;
+  height: 55rem;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3rem;
+  background-color: white;
+  box-shadow: 0px 10px 10px 5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 9.6rem;
+  row-gap: 2.6rem;
+  padding: 2rem 5rem;
+}
+
+.inner-container2 p {
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin: 0 0 1.6rem 0.2rem;
+}
+      </style>
+
   </head>
 {% if messages %}
     <ul class="messages">
@@ -69,7 +95,7 @@
 
       <!-- Profile Section -->
 
-      <form class="inner-container" method="POST" action="">
+      <form class="inner-container2" method="POST" action="">
           {% csrf_token %}
         <div class="fields">
           <p class="last-name">Nom</p>
