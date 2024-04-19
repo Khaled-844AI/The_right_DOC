@@ -361,7 +361,7 @@ def done_reservations(request, reservation_id):
     if request.method == 'POST':
         try:
             reservation = Reservation.objects.get(id=reservation_id)
-
+            email = reservation.patient.email
             res = Successful_reservations(date=reservation.date, num_patients=0)
             res.save()
 
@@ -369,6 +369,20 @@ def done_reservations(request, reservation_id):
             reservation.delete()
             doctor = Doctor.objects.get(username=request.user.username)
 
+            sender = "mouadkhaled2004@gmail.com"
+            receiver = [email, ]
+            subject = "Reservation time !"
+            message = f"""
+                             Hi Sir.{reservation.patient.user.username}, time for your reservation with DR.{doctor.username}.
+                                                             """
+
+            send_mail(
+               subject,
+               message,
+               sender,
+               receiver,
+               fail_silently=False,
+            )
             if next_ticket:
                 messages.success(request, f'Reservation Done successfully. next patient with ticket number {next_ticket}')
             else:
@@ -382,7 +396,6 @@ def done_reservations(request, reservation_id):
 def see_apointement(request):
     user = request.user
     doctor = Doctor.objects.get(username=user.username)
-    print(timezone.now().date())
     reservations = Reservation.objects.filter(doctor=doctor,date=timezone.now().date())
     return render(request,'Doctor_Dashboard/Reservation.html', {'doctor': doctor ,
                                                                 'reservations': reservations})
