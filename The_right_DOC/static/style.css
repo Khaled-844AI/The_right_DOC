@@ -345,15 +345,14 @@ a:visited {
   max-width: 50rem;
   height: 6rem;
   background: rgba(255, 255, 255, 0.2);
-
   display: inherit;
   align-items: center;
-  border-radius: 60px;
-  padding: 1rem 2rem;
+  padding: 1rem 1rem;
   border: 1px solid rgba(0, 0, 0, 0.2);
-
+  border-radius: 3rem;
   margin: 0 auto;
 }
+
 
 .search-bar input {
   background: transparent;
