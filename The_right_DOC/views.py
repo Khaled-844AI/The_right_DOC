@@ -409,7 +409,7 @@ def see_statistics(request):
     x_values = list(reservations_by_day.keys())
     y_values = list(reservations_by_day.values())
 
-    fig = px.line(x=x_values,
+    fig = px.area(x=x_values,
                   y=y_values,
                   labels={'x': 'days',
                           'y': 'patients'
