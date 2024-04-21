@@ -6,6 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="{%  static 'style.css' %}" />
+      <link rel="stylesheet" href="{%  static 'queries.css' %}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,7 +17,7 @@
 <title>candidate list with skills rating and location - Bootdey.com</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style type="text/css">
+<style>
         body{
         background:#e2eff8
         }
@@ -81,6 +82,7 @@
             margin-top: 0.25rem!important;
         }
 </style>
+
 <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <title>DocFinder</title>
@@ -109,7 +111,7 @@
 </div>
 </div>
 </div>
-<div class="candidate-list">
+<form class="candidate-list">
 {% for doctor in doctors %}
     <div class="candidate-list-box card mt-4">
         <div class="p-4 card-body">
@@ -143,17 +145,35 @@
         </div>
         </div>
 {% endfor %}
-</div>
+</form>
+</form>
 </div>
 </div>
 </div>
 </div>
 </div>
 </section>
+
+<script>
+
+const btnNavEl = document.querySelector(".btn-mobile-nav");
+const headerEl = document.querySelector(".nav-bar");
+
+btnNavEl.addEventListener("click", function () {
+  headerEl.classList.toggle("nav-open");
+});
+////////////////////////////////////////////////////////////
+// Smooth scrolling animation
+
+
+////////////////////////////////////////////////////////////
+// Sticky nav
+
+</script>
+
 <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<script type="text/javascript">
-</script>
+
   </body>
 </html>

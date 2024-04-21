@@ -1,0 +1,40 @@
+{% load static %}
+
+
+
+
+<style>
+    .map {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    border-radius: 50%; /* Make it a circle */
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    background-color: #f8fcf5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+    .custom-icon {
+    width: 2rem;
+    height: 2rem;
+    display: inline-block;
+    background-image: url("{% static 'img/img_1.png' %}");
+    background-size: 2rem;
+}
+</style>
+
+<div class="map">
+        <a href="{% url 'main-page' %}">
+            <ion-icon src="{% static 'img/img_1.png' %}" class="custom-icon"></ion-icon>
+
+        </a>
+
+</div>
+
+
+
+
+
