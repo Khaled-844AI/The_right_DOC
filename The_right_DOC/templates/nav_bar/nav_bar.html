@@ -22,7 +22,7 @@
    <li><a href="{% url 'chk-reservations'%}" class="log-in nav-button" id="reservations">Reservations</a><li>
    {% endif %}
    {% if user.is_doctor %}
-   <li><a href="{% url 'doctor-profile' user.username%}" class="log-in nav-button-forg">Profile</a><li>
+   <li><a href="{% url 'doctor-profile' user.username%}" class="log-in nav-button">Profile</a><li>
    {% endif %}
    {% if user.is_patient or user.is_doctor %}
    <li><a href="{% url 'doc-list'%}" class="log-in nav-button" id="doctors">Doctors</a><li>
