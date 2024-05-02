@@ -14,7 +14,7 @@ from django.views.generic import CreateView
 
 from The_right_DOC.decorators import patient_required, doctor_required
 from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, ReservationForm, LoginForm
-from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User, Successful_reservations
+from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User, SuccessfulReservations
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
 import plotly.express as px
@@ -356,39 +356,52 @@ def cancel_reservations(request, reservation_id):
     return redirect('/my-reservations')  # Redirect to the reservation page
 
 
+
 @doctor_required(login_url='login')
 def done_reservations(request, reservation_id):
     if request.method == 'POST':
-        try:
-            reservation = Reservation.objects.get(id=reservation_id)
-            email = reservation.patient.email
-            res = Successful_reservations(date=reservation.date, num_patients=0)
-            res.save()
+        if 'submit-button' in request.POST:
+            try:
+                reservation = Reservation.objects.get(id=reservation_id)
+                email = reservation.patient.email
 
-            next_ticket = reservation.get_highest()
-            reservation.delete()
-            doctor = Doctor.objects.get(username=request.user.username)
+                # Create SuccessfulReservations entry
+                res = SuccessfulReservations(date=reservation.date, num_patients=0)
+                res.save()
 
-            sender = "mouadkhaled2004@gmail.com"
-            receiver = [email, ]
-            subject = "Reservation time !"
-            message = f"""
-                             Hi Sir.{reservation.patient.user.username}, time for your reservation with DR.{doctor.username}.
-                                                             """
+                # Get the next ticket
+                next_ticket = reservation.get_highest()
+                reservation.delete()
+                doctor = Doctor.objects.get(username=request.user.username)
 
-            send_mail(
-               subject,
-               message,
-               sender,
-               receiver,
-               fail_silently=False,
-            )
-            if next_ticket:
-                messages.success(request, f'Reservation Done successfully. next patient with ticket number {next_ticket}')
-            else:
-                messages.error(request, f'no current reservation')
-        except Reservation.DoesNotExist:
-            messages.error(request, 'Reservation not found.')
+                # Prepare and send email
+                sender = "mouadkhaled2004@gmail.com"
+                receiver = [email, ]
+                subject = "Reservation time!"
+                message = f"Hi {reservation.patient.user.username}, time for your reservation with Dr. {doctor.username}."
+
+                send_mail(
+                    subject,
+                    message,
+                    sender,
+                    receiver,
+                    fail_silently=False,
+                )
+
+                if next_ticket:
+                    messages.success(request, f'Reservation done successfully. Next patient with ticket number {next_ticket}')
+                else:
+                    messages.error(request, 'No current reservation')
+            except Reservation.DoesNotExist:
+                messages.error(request, 'Reservation not found.')
+        elif 'cancel-button' in request.POST:
+            try:
+                reservation = Reservation.objects.get(id=reservation_id)
+                reservation.delete()
+                messages.success(request, 'Reservation canceled successfully.')
+            except Reservation.DoesNotExist:
+                messages.error(request, 'Reservation not found.')
+
     return redirect('/appointment')
 
 
@@ -408,7 +421,7 @@ def see_statistics(request):
 
     # Get all successful reservations for the current month
     current_date = datetime.now()
-    res = Successful_reservations.objects.filter(
+    res = SuccessfulReservations.objects.filter(
         date__year=current_date.year,
         date__month=current_date.month
     )
@@ -424,8 +437,9 @@ def see_statistics(request):
 
     fig = px.area(x=x_values,
                   y=y_values,
-                  labels={'x': 'days',
-                          'y': 'patients'
+                  hover_data={'Total earnings': [i * doctor.price for i in y_values]},
+                  labels={'x': 'Days',
+                          'y': 'Patients'
                           })
 
     chart = fig.to_html()

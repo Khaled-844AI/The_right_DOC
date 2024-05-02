@@ -103,26 +103,26 @@ class Reservation(models.Model):
         super(Reservation, self).save(*args, **kwargs)
 
 
-class Successful_reservations(models.Model):
+class SuccessfulReservations(models.Model):
     date = models.DateField()
     num_patients = models.IntegerField(default=0)
 
     def get_day_reservations(self):
         total = 0
-        reservations = Successful_reservations.objects.filter(date__day=self.date.month).order_by('-num_patients').first()
+        reservations = SuccessfulReservations.objects.filter(date__day=self.date.month).order_by('-num_patients').first()
         if reservations:
             return reservations.num_patients
         return total
 
     def save(self, *args, **kwargs):
 
-        highest = Successful_reservations.objects.filter(date__day=self.date.day).order_by('-num_patients').first()
+        highest = SuccessfulReservations.objects.filter(date__day=self.date.day).order_by('-num_patients').first()
         if highest:
             self.num_patients = highest.num_patients + 1
             highest.delete()
         else:
             self.num_patients = 1
-        super(Successful_reservations, self).save(*args, **kwargs)
+        super(SuccessfulReservations, self).save(*args, **kwargs)
 
 
 

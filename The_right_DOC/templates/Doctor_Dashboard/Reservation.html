@@ -72,10 +72,19 @@
   /* Capitalize status text */
 }
 
-.modern-table-container .cancel-button{
+.modern-table-container .submit-button{
     padding: 0.5rem 1.6rem;
     border-radius: 1rem;
     background-color: #e0d9d9;
+    text-decoration: none;
+    font-weight: 600;
+    color: #000000;
+}
+
+.modern-table-container .cancel-button{
+    padding: 0.5rem 1.6rem;
+    border-radius: 1rem;
+    background-color: #fc7070;
     text-decoration: none;
     font-weight: 600;
     color: #000000;
@@ -160,11 +169,13 @@
               <td>{{ reservation.description }}</td>
               <td>{{ reservation.priority }}</td>
               <td>
-                  <form method="post" action="{% url 'done_reservation' reservation.id %}">
-            {% csrf_token %}
-            <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
-            <button type="submit" class="cancel-button" id="cancel-button">Done</button>
-                  </form>
+<form method="post" action="{% url 'done_reservation' reservation.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="reservation_id" value="{{ reservation.id }}">
+    <input type="submit" class="submit-button" name="submit-button" value="Done">
+    <input type="submit" class="cancel-button" name="cancel-button" value="Cancel">
+</form>
+
               </td>
             </tr>
           {% endfor %}

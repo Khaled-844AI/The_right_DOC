@@ -1,15 +1,13 @@
-from datetime import datetime, timedelta
 
-from django import forms
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.hashers import make_password
+
 from django.db import transaction
 from django.shortcuts import redirect
 
 from The_right_DOC.models import Doctor, Markers, Reservation, Patient
-from django.contrib import messages
+
 
 SPECIALTY_CHOICES = [
     ("Anatomie pathologique", "Anatomie pathologique"),

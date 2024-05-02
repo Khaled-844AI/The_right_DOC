@@ -100,7 +100,7 @@
       <form class="inner-container2" method="POST" action="">
           {% csrf_token %}
         <div class="fields">
-          <p class="last-name">Nom</p>
+          <p class="last-name">Full name</p>
           <input
             type="text"
             value="{{ doctor.username}}"
@@ -149,7 +149,7 @@
           />
         </div>
         <div class="fields">
-          <p class="nbr-patients">Nombre de patients /jours</p>
+          <p class="nbr-patients">Patients per day</p>
           <input
             type="number"
             name="max_pat_day"
@@ -160,18 +160,18 @@
           />
         </div>
           <div class="fields">
-          <p class="nbr-patients">Prix</p>
+          <p class="nbr-patients">Price</p>
           <input
             type="number"
             name="price"
-            placeholder="Max patients"
+            placeholder="Price"
             min="0"
             class="input-field"
           />
         </div>
 
         <div class="fields2">
-            <p> jours de repos</p>
+            <p>Resting days</p>
           <input type="checkbox" name="none_work[]" value="Sunday">Sunday
           <input type="checkbox" name="none_work[]" value="Monday"> Monday
           <input type="checkbox" name="none_work[]" value="Tuesday"> Tuesday
