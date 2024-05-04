@@ -436,7 +436,7 @@ def see_statistics(request):
 
     fig = px.area(x=x_values,
                   y=y_values,
-                  hover_data={'Total earnings': [i * doctor.price for i in y_values]},
+                  hover_data={'Total earnings': [str(i * doctor.price)+'DA' for i in y_values]},
                   labels={'x': 'Days',
                           'y': 'Patients'
                           })
