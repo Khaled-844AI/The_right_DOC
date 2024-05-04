@@ -23,14 +23,12 @@
    {% if user.is_authenticated %}
    {% if user.is_patient %}
    <li><a href="{% url 'chk-reservations'%}" class="log-in nav-button" id="reservations">Reservations</a><li>
-   {% endif %}
-   {% if user.is_doctor %}
-   <li><a href="{% url 'doctor-profile' user.username%}" class="log-in nav-button">Profile</a><li>
-   {% endif %}
-   {% if user.is_patient or user.is_doctor %}
    <li><a href="{% url 'doc-list'%}" class="log-in nav-button" id="doctors">Doctors</a><li>
    <li><a href="{% url 'logout'%}" class="register nav-button">Logout</a><li>
-   <li><a class="primary-link" href=""><i class="fa-solid fa-user-doctor"></i> {{ doctor.username }}</a><li>
+   {% elif user.is_doctor %}
+   <li><a href="{% url 'doctor-profile' user.username%}" class="log-in nav-button">Profile</a><li>
+   <li><a href="{% url 'doc-list'%}" class="log-in nav-button" id="doctors">Doctors</a><li>
+   <li><a href="{% url 'logout'%}" class="register nav-button">Logout</a><li>
    {% else %}
    <li><a href="{% url 'doc-list'%}" class="log-in nav-button">Doctors</a><li>
    <li><a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a><li>

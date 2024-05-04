@@ -231,6 +231,7 @@ def make_reservation(request):
     form = ReservationForm()
     full_name = request.POST['full_name']
     doctor = Doctor.objects.get(username=full_name)
+
     if request.method == 'POST':
         form = ReservationForm(request.POST)
         if form.is_valid():
@@ -293,7 +294,6 @@ def make_reservation(request):
 @doctor_required(login_url='login')
 def doctor_profile(request, pk):
     doctor = Doctor.objects.get(username=pk)
-    print(request.user.username)
 
     if request.user.username == doctor.username:
         if request.method == 'POST':
@@ -338,7 +338,6 @@ def docListView(request):
 def check_reservations(request):
     patient = Patient.objects.get(user=request.user)
     current_date = timezone.now().date()  # Get the current date
-    print(current_date)
     # Filter reservations for today and the future
     reservations = Reservation.objects.filter(patient=patient, date__gte=current_date)
 
@@ -442,14 +441,17 @@ def see_statistics(request):
                           'y': 'Patients'
                           })
 
+    fig.update_layout(hoverlabel=dict(bgcolor='green'))
+
     chart = fig.to_html()
 
     months = ["January", "February", "March", "April", "May", "June", "July",
               "August", "September", "October", "November", "December"]
     current_month = ''
-    for i in range(1, 13):
+    for i in range(0, 12):
         if i == current_date.month:
-            current_month = months[i - 1]
+            current_month = months[i]
+            break
 
     return render(request, "Doctor_Dashboard/Statistics.html", {'doctor': doctor, 'chart': chart,
                                                                 'month':current_month})
