@@ -1,33 +1,36 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{%  static 'style.css' %}" />
-      <link rel="stylesheet" href="{% static 'queries.css' %}"/>
+    <!-- Liens vers les fichiers CSS -->
+  {% block css %}
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+    <link rel="stylesheet" href="{% static 'queries.css' %}" />
+  {% endblock %}
+    <!-- Liens vers les polices -->
+  {% block polices %}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400;500;600;700&family=Roboto:wght@400;500;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  {% endblock %}
+    <!-- Liens vers les scripts -->
+  {% block scripts %}
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  {% endblock %}
+    <!-- Titre de la page -->
+    <title>{% block title %}Home{% endblock %} | The right doc</title>
 
-    <script
-      type="module"
-      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
-    ></script>
-    <script
-      nomodule
-      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
-    ></script>
-    <title>The right doc</title>
-  </head >
+    <!-- Autres éléments du head -->
+    {% block extra_head %}{% endblock %}
+  </head>
+
   <body>
 
          {% include 'nav_bar/nav_bar.html' %}
-
+{% block content %}
     <main>
       <section class="section-hero">
         <div class="hero">
@@ -131,14 +134,18 @@
       </div>
     </section>
 
+
+{% endblock %}
+{% block footer %}
     <footer class="footer">
       <div class="container grid grid-footer">
         <div class="logo-col">
-          <a class="footer-logo">
+          <a class="footer-logo" href="{% url 'main-page' %}">
             <img
               src="{% static 'img/logo-footer.png'%}"
               alt="The Right Doc logo"
               class="footer-logo"
+
             />
           </a>
           <ul class="social-links">
@@ -177,12 +184,16 @@
           <p class="footer-heading">Ressours</p>
           <ul class="footer-nav">
             <li><a class="footer-link" href="#">Recipe directory</a></li>
-            <li><a class="footer-link" href="#">Help center</a></li>
+            <li><a class="footer-link" href="{% url 'contact-us' %}">Contact Us</a></li>
             <li><a class="footer-link" href="#">Privacy & terms</a></li>
           </ul>
         </nav>
       </div>
     </footer>
-       <script src = "{% static 'script.js' %}"></script>
+{% endblock %}
+{% block script %}
+    <script src = "{% static 'script.js' %}"></script>
+{% endblock %}
+
   </body>
 </html>

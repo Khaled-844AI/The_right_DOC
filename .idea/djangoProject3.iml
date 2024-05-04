@@ -25,6 +25,7 @@
     <orderEntry type="library" name="844aae403b" level="application" />
     <orderEntry type="library" name="ionicons" level="application" />
     <orderEntry type="library" name="MaterialDesign-Webfont" level="application" />
+    <orderEntry type="library" name="font-awesome" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />

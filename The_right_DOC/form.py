@@ -271,3 +271,10 @@ class LoginForm(AuthenticationForm):
         'placeholder': 'Your password',
         'required': 'True'
     }))
+
+class ContactForm(forms.Form):
+    name = forms.CharField(label='Name', max_length=100, widget=forms.TextInput(attrs={'class': 'input1', 'placeholder': 'Name'}))
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'input1', 'placeholder': 'Email'}))
+    subject = forms.CharField(label='Subject', max_length=100, widget=forms.TextInput(attrs={'class': 'input1', 'placeholder': 'Subject'}))
+    message = forms.CharField(label='Message', widget=forms.Textarea(attrs={'class': 'input1','placeholder': 'Message'}))
+

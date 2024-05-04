@@ -2,7 +2,10 @@
 
 <link rel="stylesheet" href="{%  static 'style.css' %}" />
  <link rel="stylesheet" href="{% static 'queries.css' %}"/>
-
+<link rel="stylesheet" href="{% static 'doc-list.css' %}" />
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
  <nav class="nav-bar">
    <a class="logo-container" href="{% url 'main-page' %}">
      <img src="{% static 'img/logo.png'%}" alt="logo of the website" class="logo-img" />
@@ -27,6 +30,7 @@
    {% if user.is_patient or user.is_doctor %}
    <li><a href="{% url 'doc-list'%}" class="log-in nav-button" id="doctors">Doctors</a><li>
    <li><a href="{% url 'logout'%}" class="register nav-button">Logout</a><li>
+   <li><a class="primary-link" href=""><i class="fa-solid fa-user-doctor"></i> {{ doctor.username }}</a><li>
    {% else %}
    <li><a href="{% url 'doc-list'%}" class="log-in nav-button">Doctors</a><li>
    <li><a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a><li>
