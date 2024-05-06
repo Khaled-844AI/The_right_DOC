@@ -154,11 +154,11 @@
             <span class="month-picker" id="month-picker">February</span>
             <div class="year-picker">
               <span class="year-change" id="prev-year">
-                <pre><</pre>
+
               </span>
               <span id="year">2021</span>
               <span class="year-change" id="next-year">
-                <pre>></pre>
+
               </span>
             </div>
           </div>
@@ -418,18 +418,6 @@ introJs().addHints();
 
     generateCalendar(curr_month.value, curr_year.value);
 
-    document.querySelector("#prev-year").onclick = () => {
-
-      if (curr_year.value > active_year.value) {
-        --curr_year.value;
-        generateCalendar(curr_month.value, curr_year.value);
-      }
-    };
-
-    document.querySelector("#next-year").onclick = () => {
-      ++curr_year.value;
-      generateCalendar(curr_month.value, curr_year.value);
-    };
 
 
     </script>
