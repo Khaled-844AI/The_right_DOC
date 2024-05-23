@@ -93,13 +93,12 @@ class Reservation(models.Model):
             if Reservation.objects.filter(doctor=self.doctor, patient=self.patient, date=self.date).exists():
                 raise ValidationError('You already did a reservation')
 
-            highest_priority = Reservation.objects.filter(doctor=self.doctor, date=self.date).order_by('-priority').first()
-            if highest_priority and highest_priority.priority >= self.doctor.max_pat_day:
+            reservation = Reservation.objects.filter(doctor=self.doctor, date=self.date).order_by('-priority').first()
+            if reservation and reservation.priority >= self.doctor.max_pat_day:
                 raise ValidationError('Maximum reservations reached for today no more patients')
-            if highest_priority:
-                self.priority = highest_priority.priority + 1
-            else:
-                self.priority = 1
+            if reservation:
+                self.priority = reservation.priority + 1
+
         super(Reservation, self).save(*args, **kwargs)
 
 

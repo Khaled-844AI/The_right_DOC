@@ -235,11 +235,10 @@ def make_reservation(request):
     if request.method == 'POST':
         form = ReservationForm(request.POST)
         if form.is_valid():
-            date = request.POST['reservation_date']  # Assuming your form field name is 'reservation_date'
+            date = request.POST['reservation_date']
 
             description = form.cleaned_data['description']
             patient = Patient.objects.get(user=request.user)
-            print(full_name + date + description)
 
             time = timezone.now().time()
             doc_end_time = doctor.end_w
@@ -415,8 +414,8 @@ def see_apointement(request):
 
 @doctor_required(login_url='login')
 def see_statistics(request):
-    user = request.user
-    doctor = Doctor.objects.get(username=user.username)
+
+    doctor = Doctor.objects.get(username=request.user.username)
 
     # Get all successful reservations for the current month
     current_date = datetime.now()
@@ -431,8 +430,8 @@ def see_statistics(request):
     for r in res:
         reservations_by_day[r.date.day] = r.num_patients
 
-    x_values = list(reservations_by_day.keys())
-    y_values = list(reservations_by_day.values())
+    x_values = list(reservations_by_day.keys())  # days per month
+    y_values = list(reservations_by_day.values())  # num reservations per day
 
     fig = px.area(x=x_values,
                   y=y_values,
@@ -454,7 +453,7 @@ def see_statistics(request):
             break
 
     return render(request, "Doctor_Dashboard/Statistics.html", {'doctor': doctor, 'chart': chart,
-                                                                'month':current_month})
+                                                                'month': current_month})
 
 
 def contact_us(request):
