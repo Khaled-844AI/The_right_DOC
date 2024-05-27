@@ -199,7 +199,7 @@ class LoginView(auth_views.LoginView):
                             return reverse('login')
                 except Doctor.DoesNotExist:
                         messages.error(self.request, "There is an issue with your doctor account. Please contact support.")
-                        return redirect(self.failed_url)
+                        return reverse('login')
 
 
         return reverse('login')
@@ -239,9 +239,18 @@ def map(request):
 
     user = request.user
 
+    if request.user.is_doctor:
+        doctor = Doctor.objects.get(username=request.user.username)
+        return render(request, 'map.html',
+                      {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES],
+                       'user': user,
+                       'doctor': doctor})
+
+
     return render(request, 'map.html',
                   {'markers': markers, 'SPECIALTY_CHOICES': [specialty[0] for specialty in SPECIALTY_CHOICES],
-                   'user': user})
+                   'user': user,
+                   'doctor':None})
 
 
 @patient_required(login_url='login')
@@ -340,7 +349,7 @@ def logoutUser(request):
     logout(request)
     return redirect('main-page')
 
-
+@login_required(login_url='login')
 def docListView(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
 
@@ -348,7 +357,14 @@ def docListView(request):
         Q(username__icontains=q) | Q(office_location__icontains=q) | Q(specialty__icontains=q)
     )
     doctors_count = doctors.count()
-    context = {'doctors': doctors, 'doctors_count': doctors_count}
+
+    if request.user.is_doctor:
+        doctor = Doctor.objects.get(username=request.user.username)
+        context = {'doctors': doctors, 'doctors_count': doctors_count, 'doctor':doctor}
+
+        return render(request, 'doc_list.html', context)
+
+    context = {'doctors': doctors, 'doctors_count': doctors_count, 'doctor': None}
     return render(request, 'doc_list.html', context)
 
 
@@ -521,4 +537,8 @@ def contact_us(request):
     else:
         form = ContactForm()
 
-    return render(request, 'contact_us.html', {'form': form})
+    if request.user.is_doctor:
+        doctor = Doctor.objects.get(username=request.user.username)
+        return render(request, 'contact_us.html', {'form': form, 'doctor': doctor})
+
+    return render(request, 'contact_us.html', {'form': form, 'doctor': None})
