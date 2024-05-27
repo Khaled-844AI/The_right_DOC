@@ -20,7 +20,7 @@ class Doctor(models.Model):
     username = models.CharField(unique=True, max_length=50)
     email = models.EmailField(unique=True)
     office_location = models.CharField(max_length=50)
-    specialty = models.CharField( max_length=20)
+    specialty = models.CharField(max_length=20)
     start_w = models.TimeField(default='00:00:00')
     end_w = models.TimeField(default='00:00:00')
     graduation_certificate = models.ImageField(upload_to='files/Certificate')
@@ -28,7 +28,7 @@ class Doctor(models.Model):
     accepted = models.BooleanField(default=False)
     price = models.IntegerField(default=0)
     max_pat_day = models.IntegerField(default=0)
-    none_work = models.CharField(max_length=10)
+    none_work = models.CharField(max_length=50)
 
     def check_duration(self, request):
         if self.start_w >= self.end_w:
@@ -39,8 +39,8 @@ class Doctor(models.Model):
         return self.username
 
 
-class Markers(models.Model):
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+class Marker(models.Model):
+    doctor = models.OneToOneField(Doctor, on_delete=models.CASCADE)
     latitude = models.FloatField()
     longitude = models.FloatField()
     description = models.CharField(max_length=200, null=True, blank=True)
@@ -84,9 +84,7 @@ class Reservation(models.Model):
         if current_rv:
             return current_rv.priority
         else:
-            return
-    def set_date(self, date):
-        self.date = date
+            return None
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -103,6 +101,7 @@ class Reservation(models.Model):
 
 
 class SuccessfulReservations(models.Model):
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     date = models.DateField()
     num_patients = models.IntegerField(default=0)
 

@@ -162,7 +162,6 @@
           <thead id="priorities">
             <tr>
               <th>Doctor</th>
-              <th>Patient</th>
               <th>Date</th>
               <th>Description</th>
               <th>your ticket</th>
@@ -174,7 +173,6 @@
           {% for reservation in reservations %}
             <tr>
               <td>{{ reservation.doctor}}</td>
-              <td>{{ reservation.patient }}</td>
               <td>{{ reservation.date }}</td>
               <td>{{ reservation.description }}</td>
               <td>{{ reservation.priority }}</td>

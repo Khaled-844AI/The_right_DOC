@@ -14,7 +14,7 @@ from django.views.generic import CreateView
 
 from The_right_DOC.decorators import patient_required, doctor_required
 from The_right_DOC.form import Doctor_RegistrationForm, Patient_RegistrationForm, ReservationForm, LoginForm, ContactForm
-from The_right_DOC.models import Doctor, Patient, OtpToken, Markers, Reservation, User, SuccessfulReservations
+from The_right_DOC.models import Doctor, Patient, OtpToken, Marker, Reservation, User, SuccessfulReservations
 from django.contrib.auth.decorators import login_required
 from The_right_DOC.form import SPECIALTY_CHOICES
 import plotly.express as px
@@ -22,7 +22,17 @@ import plotly.express as px
 
 def main_page(request):
     user = request.user
-    return render(request, 'index.html' , {'user': user})
+
+    if user.is_anonymous:
+        return render(request, 'index.html', {'user': user, 'doctor': None})
+
+    if user.is_doctor:
+       doctor = Doctor.objects.get(username=user.username)
+       if doctor:
+           return render(request, 'index.html', {'user': user, 'doctor': doctor})
+    else:
+
+       return render(request, 'index.html' , {'user': user , 'doctor' : None})
 
 
 def verify_email(request, username):
@@ -33,14 +43,10 @@ def verify_email(request, username):
 
         # valid token
         if user_otp.otp_code == request.POST['otp_code']:
-
             # checking for expired token
             if user_otp.otp_expires_at > timezone.now():
-                user.is_active = True
-
                 user = User.objects.get(email=user.email)
                 user.is_active = True
-                user.save()
                 user.save()
                 return redirect("login")
 
@@ -123,10 +129,10 @@ class PatientSignUpView(CreateView):
 
     def form_valid(self, form):
         user = form.save(self.request)
+        print(user.is_active)
         messages.success(self.request, f"You account has been successfully created please check {user.email}")
         storage = messages.get_messages(self.request)
         storage.used = True
-        login(self.request, user)
         return redirect('login')
 
 
@@ -137,7 +143,7 @@ class DoctorSignUpView(CreateView):
     success_url = reverse_lazy('main-page')
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
+        if request.user.is_authenticated :
             return redirect(self.success_url)
         return super().dispatch(request, *args, **kwargs)
 
@@ -148,9 +154,10 @@ class DoctorSignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         messages.success(self.request, f"You account has been successfully created please check {user.email}"
-                                       f"and wait for approval")
+                                       f" and wait for approval")
         storage = messages.get_messages(self.request)
         storage.used = True
+        login(self.request, user)
         return redirect('login')
 
 
@@ -158,10 +165,17 @@ class LoginView(auth_views.LoginView):
     form_class = LoginForm
     template_name = 'Signin.html'
     success_url = reverse_lazy('main-page')
+    failed_url = reverse_lazy('login')
 
     def dispatch(self, request, *args, **kwargs):
+
         if request.user.is_authenticated:
-            return redirect(self.success_url)
+            if request.user.is_patient:
+                return redirect(self.success_url)
+            if request.user.is_doctor:
+                doctor = Doctor.objects.get(username=request.user.username)
+                if doctor.accepted:
+                    return redirect(self.success_url)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -175,15 +189,19 @@ class LoginView(auth_views.LoginView):
             if user.is_patient:
                 return reverse('map')
             elif user.is_doctor:
-                doctor = Doctor.objects.get(username=user.username)
-                if not doctor.accepted:
-                    messages.error(self.request, f"Account not approved yet wait for approval")
-                    storage = messages.get_messages(self.request)
-                    storage.used = True
-                    return reverse('login')
-                else:
-                    print('doctor')
-                    return reverse('doctor-profile', kwargs={'pk': user.username})
+
+                try:
+                        doctor = Doctor.objects.get(user=user)
+                        if doctor.accepted:
+                            return reverse('doctor-profile', kwargs={'pk': user.username})
+                        else:
+                            messages.error(self.request, "Your account is not yet accepted. Please wait for approval.")
+                            return reverse('login')
+                except Doctor.DoesNotExist:
+                        messages.error(self.request, "There is an issue with your doctor account. Please contact support.")
+                        return redirect(self.failed_url)
+
+
         return reverse('login')
 
     def form_invalid(self, form):
@@ -216,7 +234,7 @@ def doctor_reservation(request, full_name):
 
 @login_required(login_url='login')
 def map(request):
-    markers = Markers.objects.all().values('doctor__username', 'doctor__specialty', 'doctor__price', 'doctor__start_w',
+    markers = Marker.objects.all().values('doctor__username', 'doctor__specialty', 'doctor__price', 'doctor__start_w',
                                            'doctor__end_w', 'latitude', 'longitude', 'description')
 
     user = request.user
@@ -236,14 +254,15 @@ def make_reservation(request):
         form = ReservationForm(request.POST)
         if form.is_valid():
             date = request.POST['reservation_date']
-
+            date = str(date)
+            print(date)
             description = form.cleaned_data['description']
             patient = Patient.objects.get(user=request.user)
 
             time = timezone.now().time()
             doc_end_time = doctor.end_w
 
-            if time > doc_end_time:
+            if time > doc_end_time and date.split('-')[2] == timezone.now().date():
                 messages.error(request, f'reservations with Dr {doctor} are done today')
                 storage = messages.get_messages(request)
                 storage.used = True
@@ -356,7 +375,7 @@ def cancel_reservations(request, reservation_id):
 
 
 @doctor_required(login_url='login')
-def done_reservations(request, reservation_id):
+def decide_reservations(request, reservation_id):
     if request.method == 'POST':
         if 'submit-button' in request.POST:
             try:
@@ -364,12 +383,13 @@ def done_reservations(request, reservation_id):
                 email = reservation.patient.email
 
                 # Create SuccessfulReservations entry
-                res = SuccessfulReservations(date=reservation.date, num_patients=0)
+                res = SuccessfulReservations(doctor=reservation.doctor, date=reservation.date, num_patients=0)
                 res.save()
 
                 # Get the next ticket
-                next_ticket = reservation.get_highest()
                 reservation.delete()
+                next_ticket = reservation.get_highest()
+
                 doctor = Doctor.objects.get(username=request.user.username)
 
                 # Prepare and send email
@@ -395,8 +415,20 @@ def done_reservations(request, reservation_id):
         elif 'cancel-button' in request.POST:
             try:
                 reservation = Reservation.objects.get(id=reservation_id)
+                new_priority = reservation.get_highest()
+
+                date = reservation.date
+                doctor = reservation.doctor
+                patient = reservation.patient
+                description = reservation.description
                 reservation.delete()
+
+                if new_priority:
+                    Reservation.objects.create(doctor=doctor, patient=patient,
+                                               description=description, date=date,
+                                               priority=new_priority + 1)
                 messages.success(request, 'Reservation canceled successfully.')
+                return redirect('see_appointment')
             except Reservation.DoesNotExist:
                 messages.error(request, 'Reservation not found.')
 
@@ -407,8 +439,14 @@ def done_reservations(request, reservation_id):
 def see_apointement(request):
     user = request.user
     doctor = Doctor.objects.get(username=user.username)
-    reservations = Reservation.objects.filter(doctor=doctor,date=timezone.now().date())
-    return render(request,'Doctor_Dashboard/Reservation.html', {'doctor': doctor ,
+    reservations = Reservation.objects.all().order_by('priority')
+
+    if reservations:
+        for res in reservations:
+            if res.date < timezone.now().date():
+                res.delete()
+
+    return render(request,'Doctor_Dashboard/Reservation.html', {'doctor': doctor,
                                                                 'reservations': reservations})
 
 
@@ -420,6 +458,7 @@ def see_statistics(request):
     # Get all successful reservations for the current month
     current_date = datetime.now()
     res = SuccessfulReservations.objects.filter(
+        doctor=doctor,
         date__year=current_date.year,
         date__month=current_date.month
     )
@@ -449,7 +488,7 @@ def see_statistics(request):
     current_month = ''
     for i in range(0, 12):
         if i == current_date.month:
-            current_month = months[i]
+            current_month = months[i - 1]
             break
 
     return render(request, "Doctor_Dashboard/Statistics.html", {'doctor': doctor, 'chart': chart,

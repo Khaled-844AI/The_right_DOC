@@ -31,6 +31,13 @@ def create_token(sender, instance, created, **kwargs):
                                 """
                 sender = "mouadkhaled2004@gmail.com"
                 receiver = [instance.email, ]
+                send_mail(
+                    subject,
+                    message,
+                    sender,
+                    receiver,
+                    fail_silently=False,
+                )
              elif instance.is_doctor:
                  message = f"""
                                                 Hi Dr.{instance.username}, here is your OTP {otp.otp_code} 

@@ -25,7 +25,7 @@
    <li><a href="{% url 'chk-reservations'%}" class="log-in nav-button" id="reservations">Reservations</a><li>
    <li><a href="{% url 'doc-list'%}" class="log-in nav-button" id="doctors">Doctors</a><li>
    <li><a href="{% url 'logout'%}" class="register nav-button">Logout</a><li>
-   {% elif user.is_doctor %}
+   {% elif user.is_doctor and doctor and doctor.accepted %}
    <li><a href="{% url 'doctor-profile' user.username%}" class="log-in nav-button">Profile</a><li>
    <li><a href="{% url 'doc-list'%}" class="log-in nav-button" id="doctors">Doctors</a><li>
    <li><a href="{% url 'logout'%}" class="register nav-button">Logout</a><li>

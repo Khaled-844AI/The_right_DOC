@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.db import transaction
 from django.shortcuts import redirect
 
-from The_right_DOC.models import Doctor, Markers, Reservation, Patient
+from The_right_DOC.models import Doctor, Marker, Reservation, Patient
 
 
 SPECIALTY_CHOICES = [
@@ -207,8 +207,8 @@ class Doctor_RegistrationForm(UserCreationForm):
             office_location=self.cleaned_data['office_location'],
             specialty=self.cleaned_data['specialty'],
             graduation_certificate=self.cleaned_data['graduation_certificate'],
-            password=self.cleaned_data['password1'])
-        marker = Markers.objects.create(
+            password=self.cleaned_data['password1'], accepted=False)
+        marker = Marker.objects.create(
             doctor=doctor,
             latitude=12,
             longitude=-15,
@@ -247,13 +247,15 @@ class Patient_RegistrationForm(UserCreationForm):
     @transaction.atomic
     def save(self, request, commit=True):
         user = super().save(commit=False)
+        user.is_patient = True
         email = self.cleaned_data['email']
         if User.objects.filter(email=email, is_active=True).exists():
             messages.error(request, 'Email is already in use.')
             return redirect('register-patient')
-        user.is_patient = True
+
         if commit:
             user.save()
+
         patient = Patient.objects.create(user=user, email=self.cleaned_data['email'],
                                          is_active=False)
         return user
