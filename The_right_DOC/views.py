@@ -270,15 +270,15 @@ def make_reservation(request):
 
             time = timezone.now().time()
             doc_end_time = doctor.end_w
-
-            if time > doc_end_time and date.split('-')[2] == timezone.now().date():
-                messages.error(request, f'reservations with Dr {doctor} are done today')
+            print(time)
+            print(doc_end_time)
+            if time > doc_end_time and date.split('-')[2] == str(timezone.now().day):
+                messages.error(request, f'Reservations with Dr {doctor} are done today')
                 storage = messages.get_messages(request)
                 storage.used = True
                 return render(request, 'Patient_Dashboard/calendar.html', {"form": form,
                                                                            "full_name": full_name,
                                                                            "non_work": doctor.none_work})
-
             # Check if a reservation already exists for this doctor, patient, and date
             if Reservation.objects.filter(doctor=doctor, patient=patient, date=date).exists():
                 messages.error(request, f'You already did a reservation with Dr {doctor}')
