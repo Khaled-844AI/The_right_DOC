@@ -130,7 +130,7 @@
 {% endif %}
 <body class="light">
   <div class="container">
-  <div class="map">
+  <div class="map hidden">
         <a href="{% url 'map' %}">
             <ion-icon src="{% static 'img/img.png' %}" class="custom-icon"></ion-icon>
 
@@ -197,6 +197,7 @@
     </div>
   </div>
   <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+  <script src="{% static 'animation.js' %}"></script>
 
 </body>
 </html>
