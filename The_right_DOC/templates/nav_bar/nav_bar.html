@@ -20,7 +20,11 @@
 
    <div class="main-nav flex-align">
      <ul class="main-nav-list" >
-   {% if user.is_authenticated %}
+   {% if user.is_anonymous %}
+   <li><a href="{% url 'doc-list'%}" class="log-in nav-button">Doctors</a><li>
+   <li><a href="{% url 'pat-or-doc'%}" class="log-in nav-button">Sign up</a><li>
+   <li><a href="{% url 'login'%}" class="register nav-button">Sign in</a><li>
+   {% elif user.is_authenticated %}
    {% if user.is_patient %}
    <li><a href="{% url 'chk-reservations'%}" class="log-in nav-button" id="reservations">Reservations</a><li>
    <li><a href="{% url 'doc-list'%}" class="log-in nav-button" id="doctors">Doctors</a><li>

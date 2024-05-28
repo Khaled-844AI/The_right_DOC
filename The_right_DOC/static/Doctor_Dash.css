@@ -39,7 +39,18 @@
   list-style-type: none;
   margin-bottom: 3rem;
 }
+.hidden{
+  opacity: 0;
+  filter: blur(5px);
+  transform: translate(-100%);
+  transition: 1s;
+}
 
+.show{
+  opacity: 1;
+  filter: blur(0);
+  transform: translate(0);
+}
 .message {
   padding: 10px;
   border-radius: 2rem;

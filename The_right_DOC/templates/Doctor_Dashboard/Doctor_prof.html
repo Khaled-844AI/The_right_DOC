@@ -59,10 +59,10 @@
 
     <div class="container">
       <aside>
-       <a href="{% url 'main-page' %}" class="logo flex-center">
+       <a href="{% url 'main-page' %}" class="logo flex-center hidden">
              <img src="{% static 'img/logo-footer.png' %}" alt="logo of the website" class="logo-img" />
         </a>
-        <div class="side-bar">
+        <div class="side-bar hidden">
           <a href="{% url 'doctor-profile' doctor.username%}" class="side-bar-links active">
             <span class="flex-center"
               ><ion-icon name="person-circle-outline" class="icon"></ion-icon
@@ -93,7 +93,7 @@
         </div>
       </aside>
 
-      <div class="heading">Profile</div>
+      <div class="heading hidden">Profile</div>
 
       <!-- Profile Section -->
 
@@ -186,7 +186,21 @@
         </div>
       </form>
 
-      <!-- End Profile Section -->
+      <script>
+          const observer = new IntersectionObserver((entries) =>{
+        entries.forEach((entry) =>{
+                console.log(entry)
+                if(entry.isIntersecting){
+                  entry.target.classList.add('show');
+                }else{
+                  entry.target.classList.remove('show');
+                }
+        });
+    });
+
+const hidden_el = document.querySelectorAll('.hidden');
+hidden_el.forEach((ele) => observer.observe(ele));
+      </script>
     </div>
   </body>
 </html>

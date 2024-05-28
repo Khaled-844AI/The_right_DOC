@@ -349,7 +349,7 @@ def logoutUser(request):
     logout(request)
     return redirect('main-page')
 
-@login_required(login_url='login')
+
 def docListView(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
 
@@ -357,6 +357,11 @@ def docListView(request):
         Q(username__icontains=q) | Q(office_location__icontains=q) | Q(specialty__icontains=q)
     )
     doctors_count = doctors.count()
+
+    if request.user.is_anonymous:
+        context = {'doctors': doctors, 'doctors_count': doctors_count, 'doctor': None}
+
+        return render(request, 'doc_list.html', context)
 
     if request.user.is_doctor:
         doctor = Doctor.objects.get(username=request.user.username)

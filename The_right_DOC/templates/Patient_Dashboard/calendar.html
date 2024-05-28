@@ -120,10 +120,10 @@
         </a>
 
     </div>
-      <div class="side-bar">
+      <div class="side-bar hidden">
 
-        <ul class="side-bar-list">
-          <li class="list-elt">
+        <ul class="side-bar-list ">
+          <li class="list-elt ">
             <a href="#" id="calendar-button"
               >Calendar
               <div class="icon-container">
@@ -418,8 +418,23 @@ introJs().addHints();
 
     generateCalendar(curr_month.value, curr_year.value);
 
+    const observer = new IntersectionObserver((entries) =>{
+        entries.forEach((entry) =>{
+                console.log(entry)
+                if(entry.isIntersecting){
+                  entry.target.classList.add('show');
+                }else{
+                  entry.target.classList.remove('show');
+                }
+        });
+    });
+
+const hidden_el = document.querySelectorAll('.hidden');
+hidden_el.forEach((ele) => observer.observe(ele));
 
 
     </script>
+
+
   </body>
 </html>
