@@ -63,10 +63,10 @@
         <!-- info 01 -->
         <div class="info-text-box">
           <ion-icon name="time-outline" class="info-icon"></ion-icon>
-          <h3 class="heading-tertiary animate">
+          <h3 class="heading-tertiary hidden">
             Save your time
           </h3>
-          <p class="info-description animate">
+          <p class="info-description hidden">
               At <b>The right DOC</b>, we prioritize your health and convenience. Our comprehensive database features a diverse range of healthcare providers, ensuring that you can find a doctor who meets your specific needs and preferences. From general practitioners to specialists in various fields such as cardiology, dermatology, and pediatrics, our platform connects you with reputable professionals committed to delivering exceptional care.
           </p>
         </div>
@@ -83,10 +83,10 @@
 
         <div class="info-text-box">
             <ion-icon name="checkmark-circle" class="info-icon"></ion-icon>
-          <h3 class="heading-tertiary">
+          <h3 class="heading-tertiary hidden">
             Make your reservation
           </h3>
-          <p class="info-description animate">
+          <p class="info-description hidden">
 
              Making a reservation for a consultation with your doctor is not just about securing a slot
               in their schedule; it's a proactive step towards safeguarding your health and well-being.
@@ -102,10 +102,10 @@
 
         <div class="info-text-box">
             <ion-icon name="medkit" class="info-icon"></ion-icon>
-          <h3 class="heading-tertiary">
+          <h3 class="heading-tertiary hidden">
             Meet your patients
           </h3>
-          <p class="info-description animate">
+          <p class="info-description hidden">
               Your Patients are waiting for you what are you waiting for ? if you are a Doctor you can register at <B>The right DOC</B>
               and Get a place on the map to meet your patients every day and save your time and see how well
               you are doing by looking at each month statistics and earn more patients from different places by joining the platform
@@ -127,10 +127,10 @@
       <div class="container" >
         <div class="cta">
           <div class="cta-text-box">
-            <h2 class="heading-secondary">
+            <h2 class="heading-secondary hidden">
               meet your doctor at the right place
             </h2>
-            <p class="cta-text animate">
+            <p class="cta-text hidden">
 
                 Explore nearby healthcare services effortlessly with our map feature.
                 Find doctors and facilities close to you, access contact details,
@@ -204,7 +204,7 @@
     </footer>
 {% endblock %}
 {% block script %}
-    <script src = "{% static 'script.js' %}"></script>
+    <script defer src = "{% static 'script.js' %}"></script>
 {% endblock %}
 
   </body>
