@@ -278,8 +278,8 @@ introJs().addHints();
 
     isLeapYear = (year) => {
       return (
-        (year % 4 === 0 && year % 100 !== 0 && year % 400 !== 0) ||
-        (year % 100 === 0 && year % 400 === 0)
+        (year % 4 === 0 && year % 100 !== 0) ||
+        (year % 400 === 0)
       );
     };
 
@@ -360,19 +360,19 @@ introJs().addHints();
 
       // get first day of month
 
-      let first_day = new Date(year, month, 1);
+      let first_date = new Date(year, month, 1);
       let today = new Date();
 
-      for (let i = 0; i <= days_of_month[month] + first_day.getDay() - 1; i++) {
+      for (let i = 0; i <= days_of_month[month] + first_date.getDay() - 1; i++) {
         let day = document.createElement("div");
-        if (i >= first_day.getDay()) {
+        if (i >= first_date.getDay()) {
           day.classList.add("calendar-day-hover");
-          day.innerHTML = i - first_day.getDay() + 1;
+          day.innerHTML = i - first_date.getDay() + 1;
 
-          if (i >= today.getDate() && (i - first_day.getDay() + 1) >= today.getDate() && !non_w.split(',').includes(getDayName(i))){
+          if (i - first_date.getDay() + 1 >= today.getDate() && !non_w.split(',').includes(getDayName(i))){
               day.addEventListener("click", (event) => {
                   const popup = document.querySelector('.popup')
-                  show_popup(popup, `${year}-${month + 1}-${i - first_day.getDay() + 1}`);
+                  show_popup(popup, `${year}-${month + 1}-${i - first_date.getDay() + 1}`);
               });
           }
           if (non_w.split(',').includes(getDayName(i))) {

@@ -510,7 +510,7 @@ def see_statistics(request):
     return render(request, "Doctor_Dashboard/Statistics.html", {'doctor': doctor, 'chart': chart,
                                                                 'month': current_month})
 
-
+@login_required(login_url='login')
 def contact_us(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -536,6 +536,7 @@ def contact_us(request):
             return render(request, 'contact_us.html')
     else:
         form = ContactForm()
+
 
     if request.user.is_doctor:
         doctor = Doctor.objects.get(username=request.user.username)

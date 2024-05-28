@@ -131,7 +131,7 @@ function filterMarkersBySpecialty(specialty) {
         marker.remove();
     });
 
-    markers = markersData.filter(marker => specialty === '' || marker.specialty === specialty)
+    markers = markersData.filter(marker =>marker.specialty === specialty || specialty === '')
         .map(marker => {
             const fullNameEncoded = encodeURIComponent(marker.fullName);
             const url = `/doctor-reservation/${fullNameEncoded}`;

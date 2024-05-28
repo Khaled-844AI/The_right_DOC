@@ -152,7 +152,7 @@ class Doctor_RegistrationForm(UserCreationForm):
     }))
     office_location = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'input',
-        'placeholder': 'Your office location',
+        'placeholder': 'Wilaya - location(office)',
         'required': 'True'
     }))
     graduation_certificate = forms.ImageField(widget=forms.FileInput(attrs={
