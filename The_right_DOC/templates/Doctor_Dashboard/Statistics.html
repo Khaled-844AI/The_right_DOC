@@ -81,7 +81,7 @@
           </a>
         </div>
       </aside>
-      <div class="heading">Statistics for {{ month }}</div>
+      <div class="heading hidden">Statistics for {{ month }}</div>
       <div class="inner-container2">
 
            {{ chart|safe }}
@@ -92,4 +92,5 @@
     </div>
 
   </body>
+<script src="{% static 'animation.js' %}"></script>
 </html>

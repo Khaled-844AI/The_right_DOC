@@ -129,7 +129,6 @@ class PatientSignUpView(CreateView):
 
     def form_valid(self, form):
         user = form.save(self.request)
-        print(user.is_active)
         messages.success(self.request, f"You account has been successfully created please check {user.email}")
         storage = messages.get_messages(self.request)
         storage.used = True
@@ -263,15 +262,12 @@ def make_reservation(request):
         form = ReservationForm(request.POST)
         if form.is_valid():
             date = request.POST['reservation_date']
-            date = str(date)
-            print(date)
             description = form.cleaned_data['description']
             patient = Patient.objects.get(user=request.user)
 
             time = timezone.now().time()
             doc_end_time = doctor.end_w
-            print(time)
-            print(doc_end_time)
+
             if time > doc_end_time and date.split('-')[2] == str(timezone.now().day):
                 messages.error(request, f'Reservations with Dr {doctor} are done today')
                 storage = messages.get_messages(request)
@@ -329,7 +325,6 @@ def doctor_profile(request, pk):
             max_pat_day = request.POST.get('max_pat_day')
             none_work = request.POST.getlist('none_work[]')
             price = request.POST.get('price')
-            print(price)
 
             doctor.start_w = start_w
             doctor.end_w = end_w
@@ -396,12 +391,11 @@ def cancel_reservations(request, reservation_id):
 
 
 @doctor_required(login_url='login')
-def decide_reservations(request, reservation_id):
+def  decide_reservations(request, reservation_id):
     if request.method == 'POST':
         if 'submit-button' in request.POST:
             try:
                 reservation = Reservation.objects.get(id=reservation_id)
-                email = reservation.patient.email
 
                 # Create SuccessfulReservations entry
                 res = SuccessfulReservations(doctor=reservation.doctor, date=reservation.date, num_patients=0)
@@ -411,32 +405,56 @@ def decide_reservations(request, reservation_id):
                 reservation.delete()
                 next_ticket = reservation.get_highest()
 
-                doctor = Doctor.objects.get(username=request.user.username)
-
-                # Prepare and send email
-                sender = "mouadkhaled2004@gmail.com"
-                receiver = [email, ]
-                subject = "Reservation time!"
-                message = f"Hi {reservation.patient.user.username}, time for your reservation with Dr. {doctor.username}."
-
-                send_mail(
-                    subject,
-                    message,
-                    sender,
-                    receiver,
-                    fail_silently=False,
-                )
-
                 if next_ticket:
                     messages.success(request, f'Reservation done successfully. Next patient with ticket number {next_ticket}')
                 else:
                     messages.error(request, 'No current reservation')
+
+                if next_ticket and Reservation.objects.all().count() >= 2:
+                   next_res = Reservation.objects.get(doctor=reservation.doctor,
+                                                      date=reservation.date,
+                                                      priority=next_ticket + 1)
+
+                   if next_res:
+                    # Prepare and send email
+                    sender = "mouadkhaled2004@gmail.com"
+                    receiver = [next_res.patient.email, ]
+                    subject = "Reservation time!"
+                    message = f"Hi {next_res.patient.user.username}, time for your reservation with Dr. {request.user.username}."
+
+                    send_mail(
+                       subject,
+                       message,
+                       sender,
+                       receiver,
+                       fail_silently=False,
+                    )
+                elif next_ticket:
+                    next_res = Reservation.objects.get(doctor=reservation.doctor,
+                                                       date=reservation.date,
+                                                       priority=next_ticket)
+
+                    if next_res:
+                        # Prepare and send email
+                        sender = "mouadkhaled2004@gmail.com"
+                        receiver = [next_res.patient.email, ]
+                        subject = "Reservation time!"
+                        message = f"Hi {next_res.patient.user.username}, time for your reservation with Dr. {request.user.username}."
+
+                        send_mail(
+                            subject,
+                            message,
+                            sender,
+                            receiver,
+                            fail_silently=False,
+                        )
+
+
             except Reservation.DoesNotExist:
                 messages.error(request, 'Reservation not found.')
         elif 'cancel-button' in request.POST:
             try:
                 reservation = Reservation.objects.get(id=reservation_id)
-                new_priority = reservation.get_highest()
 
                 date = reservation.date
                 doctor = reservation.doctor
@@ -444,10 +462,8 @@ def decide_reservations(request, reservation_id):
                 description = reservation.description
                 reservation.delete()
 
-                if new_priority:
-                    Reservation.objects.create(doctor=doctor, patient=patient,
-                                               description=description, date=date,
-                                               priority=new_priority + 1)
+                Reservation.objects.create(doctor=doctor, patient=patient,
+                                               description=description, date=date)
                 messages.success(request, 'Reservation canceled successfully.')
                 return redirect('see_appointment')
             except Reservation.DoesNotExist:
