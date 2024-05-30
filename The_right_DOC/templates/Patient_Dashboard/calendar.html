@@ -294,7 +294,6 @@ introJs().addHints();
 
     let curr_month = { value: currDate.getMonth() };
     let curr_year = { value: currDate.getFullYear() };
-    const active_year = { value: currDate.getFullYear() }
 
     overlay.addEventListener('click', () => {
       const modals = document.querySelectorAll('.popup.active')
@@ -407,9 +406,7 @@ generateCalendar = (month, year) => {
       month.querySelector("div").onclick = (event) => {
         month_list.classList.remove("show");
         let selectedMonth = event.target.dataset.month; // Get the selected month index
-        if (curr_year.value > active_year.value)
-           generateCalendar(selectedMonth, curr_year.value);
-        else if(selectedMonth >= active_date.getMonth())
+        if(selectedMonth >= active_date.getMonth())
           generateCalendar(selectedMonth, curr_year.value);
       };
       month_list.appendChild(month);
