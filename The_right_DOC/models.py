@@ -114,7 +114,9 @@ class SuccessfulReservations(models.Model):
 
     def save(self, *args, **kwargs):
 
-        highest = SuccessfulReservations.objects.filter(date__day=self.date.day).order_by('-num_patients').first()
+        highest = SuccessfulReservations.objects.filter(date__day=self.date.day,
+                                                        date__month=self.date.month,
+                                                        date__year=self.date.year).order_by('-num_patients').first()
         if highest:
             self.num_patients = highest.num_patients + 1
             highest.delete()

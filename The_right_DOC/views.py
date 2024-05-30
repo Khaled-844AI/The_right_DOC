@@ -407,6 +407,7 @@ def  decide_reservations(request, reservation_id):
 
                 if next_ticket:
                     messages.success(request, f'Reservation done successfully. Next patient with ticket number {next_ticket}')
+
                 else:
                     messages.error(request, 'No current reservation')
 
@@ -449,7 +450,6 @@ def  decide_reservations(request, reservation_id):
                             fail_silently=False,
                         )
 
-
             except Reservation.DoesNotExist:
                 messages.error(request, 'Reservation not found.')
         elif 'cancel-button' in request.POST:
@@ -463,7 +463,7 @@ def  decide_reservations(request, reservation_id):
                 reservation.delete()
 
                 Reservation.objects.create(doctor=doctor, patient=patient,
-                                               description=description, date=date)
+                                           description=description, date=date)
                 messages.success(request, 'Reservation canceled successfully.')
                 return redirect('see_appointment')
             except Reservation.DoesNotExist:
@@ -483,8 +483,8 @@ def see_apointement(request):
             if res.date < timezone.now().date():
                 res.delete()
 
-    return render(request,'Doctor_Dashboard/Reservation.html', {'doctor': doctor,
-                                                                'reservations': reservations})
+    return render(request, 'Doctor_Dashboard/Reservation.html', {'doctor': doctor,
+                                                                 'reservations': reservations})
 
 
 @doctor_required(login_url='login')
