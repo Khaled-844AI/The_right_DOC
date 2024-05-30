@@ -331,65 +331,66 @@ introJs().addHints();
       })
     })
 
-    generateCalendar = (month, year) => {
-      let calendar_days = calendar.querySelector(".calendar-days");
-      let calendar_header_year = calendar.querySelector("#year");
+generateCalendar = (month, year) => {
+  let calendar_days = calendar.querySelector(".calendar-days");
+  let calendar_header_year = calendar.querySelector("#year");
 
-      let days_of_month = [
-        31,
-        getFebDays(year),
-        31,
-        30,
-        31,
-        30,
-        31,
-        31,
-        30,
-        31,
-        30,
-        31,
-      ];
+  let days_of_month = [
+    31,
+    getFebDays(year),
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ];
 
-      const non_w = '{{ non_work }}'
+  const non_w = '{{ non_work }}';
 
-      calendar_days.innerHTML = "";
+  calendar_days.innerHTML = "";
 
-      let currDate = new Date();
-      if (!month) month = currDate.getMonth();
-      if (!year) year = currDate.getFullYear();
+  let currDate = new Date();
+  if (!month) month = currDate.getMonth();
+  if (!year) year = currDate.getFullYear();
 
-      let curr_month = `${month_names[month]}`;
-      month_picker.innerHTML = curr_month;
-      calendar_header_year.innerHTML = year;
+  let curr_month = `${month_names[month]}`;
+  month_picker.innerHTML = curr_month;
+  calendar_header_year.innerHTML = year;
 
-      // get first day of month
+  // get first day of month
 
-      let first_date = new Date(year, month, 1);
-      let today = new Date();
+  let first_date = new Date(year, month, 1);
+  let today = new Date();
 
-      for (let i = 0; i <= days_of_month[month] + first_date.getDay() - 1; i++) {
-        let day = document.createElement("div");
-        if (i >= first_date.getDay() ) {
-          day.classList.add("calendar-day-hover");
-          day.innerHTML = i - first_date.getDay() + 1;
+  for (let i = 0; i <= days_of_month[month] + first_date.getDay() - 1; i++) {
+    let day = document.createElement("div");
+    if (i >= first_date.getDay()) {
+      day.classList.add("calendar-day-hover");
+      day.innerHTML = i - first_date.getDay() + 1;
 
-          if ((i - first_date.getDay() + 1 >= today.getDate() && !non_w.split(',').includes(getDayName(i))) ||
-              (month > today.getMonth() && !non_w.split(',').includes(getDayName(i))) ){
-              day.classList.add("work");
-              day.addEventListener("click", (event) => {
-                  const popup = document.querySelector('.popup')
-                  show_popup(popup, `${year}-${month + 1}-${i - first_date.getDay() + 1}`);
-              });
-          }
-          if (non_w.split(',').includes(getDayName(i))) {
-                  day.classList.add("non_work");
-          }
-        } else {
-          day.classList.add("empty-day");
-        }
-        calendar_days.appendChild(day);
+      if ((i - first_date.getDay() + 1 >= today.getDate() && !non_w.split(',').includes(getDayName(i))) ||
+          (month > today.getMonth() && !non_w.split(',').includes(getDayName(i)))) {
+          day.classList.add("work");
+          day.addEventListener("click", (event) => {
+              const popup = document.querySelector('.popup');
+              show_popup(popup, `${year}-${parseInt(month) + 1}-${i - first_date.getDay() + 1}`);
+          });
       }
-    };
+      if (non_w.split(',').includes(getDayName(i))) {
+              day.classList.add("non_work");
+      }
+    } else {
+      day.classList.add("empty-day");
+    }
+    calendar_days.appendChild(day);
+  }
+};
+
 
     const getDayName = (index) => {
        const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -435,8 +436,8 @@ introJs().addHints();
         });
     });
 
-const hidden_el = document.querySelectorAll('.hidden');
-hidden_el.forEach((ele) => observer.observe(ele));
+    const hidden_el = document.querySelectorAll('.hidden');
+    hidden_el.forEach((ele) => observer.observe(ele));
 
 
     </script>

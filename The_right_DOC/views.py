@@ -476,7 +476,7 @@ def  decide_reservations(request, reservation_id):
 def see_apointement(request):
     user = request.user
     doctor = Doctor.objects.get(username=user.username)
-    reservations = Reservation.objects.all().order_by('priority')
+    reservations = Reservation.objects.filter(doctor=doctor, date=timezone.now().date()).order_by('priority')
 
     if reservations:
         for res in reservations:
