@@ -70,6 +70,10 @@
     background: #f18080;
     border-radius: 3rem;
 }
+.work{
+    background: #c8f7ff;
+    border-radius: 3rem;
+}
 .map {
     height: 5rem;
     width: 5rem;
@@ -365,11 +369,13 @@ introJs().addHints();
 
       for (let i = 0; i <= days_of_month[month] + first_date.getDay() - 1; i++) {
         let day = document.createElement("div");
-        if (i >= first_date.getDay()) {
+        if (i >= first_date.getDay() ) {
           day.classList.add("calendar-day-hover");
           day.innerHTML = i - first_date.getDay() + 1;
 
-          if (i - first_date.getDay() + 1 >= today.getDate() && !non_w.split(',').includes(getDayName(i))){
+          if ((i - first_date.getDay() + 1 >= today.getDate() && !non_w.split(',').includes(getDayName(i))) ||
+              (month > today.getMonth() && !non_w.split(',').includes(getDayName(i))) ){
+              day.classList.add("work");
               day.addEventListener("click", (event) => {
                   const popup = document.querySelector('.popup')
                   show_popup(popup, `${year}-${month + 1}-${i - first_date.getDay() + 1}`);
