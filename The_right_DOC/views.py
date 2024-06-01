@@ -371,8 +371,8 @@ def docListView(request):
 @patient_required(login_url='login')
 def check_reservations(request):
     patient = Patient.objects.get(user=request.user)
-    current_date = timezone.now().date()  # Get the current date
-    # Filter reservations for today and the future
+    current_date = timezone.now().date()
+
     reservations = Reservation.objects.filter(patient=patient, date__gte=current_date)
 
     return render(request, 'Patient_Dashboard/Reservation.html', {'reservations': reservations})
@@ -386,7 +386,7 @@ def cancel_reservations(request, reservation_id):
             messages.success(request, 'Reservation canceled successfully.')
         except Reservation.DoesNotExist:
             messages.error(request, 'Reservation not found.')
-    return redirect('/my-reservations')  # Redirect to the reservation page
+    return redirect('/my-reservations')
 
 
 
@@ -397,7 +397,6 @@ def  decide_reservations(request, reservation_id):
             try:
                 reservation = Reservation.objects.get(id=reservation_id)
 
-                # Create SuccessfulReservations entry
                 res = SuccessfulReservations(doctor=reservation.doctor, date=reservation.date, num_patients=0)
                 res.save()
 
@@ -524,8 +523,8 @@ def see_statistics(request):
               "August", "September", "October", "November", "December"]
     current_month = ''
     for i in range(0, 12):
-        if i == current_date.month:
-            current_month = months[i - 1]
+        if i + 1 == current_date.month:
+            current_month = months[i]
             break
 
     return render(request, "Doctor_Dashboard/Statistics.html", {'doctor': doctor, 'chart': chart,
