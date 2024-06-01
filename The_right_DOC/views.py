@@ -276,7 +276,7 @@ def make_reservation(request):
                                                                            "full_name": full_name,
                                                                            "non_work": doctor.none_work})
             # Check if a reservation already exists for this doctor, patient, and date
-            if Reservation.objects.filter(doctor=doctor, patient=patient, date=date).exists():
+            if Reservation.objects.filter(doctor=doctor, patient=patient).exists():
                 messages.error(request, f'You already did a reservation with Dr {doctor}')
                 storage = messages.get_messages(request)
                 storage.used = True
