@@ -2,7 +2,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from djangoProject3.settings import AUTH_USER_MODEL
-from .models import OtpToken, Patient
+from .models import OtpToken
 from django.core.mail import send_mail
 from django.utils import timezone
 
