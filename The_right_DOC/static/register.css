@@ -33,6 +33,11 @@ body{
   transform: translate(0);
 }
 
+.glow {
+            color: #023552; /* Set text color to blue */
+            text-shadow: 0 0 10px #c0c3c4; /* Add a glowing effect */
+}
+
 .container{
     background-color: #fff;
     border-radius: 50px;
