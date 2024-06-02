@@ -550,7 +550,7 @@ def contact_us(request):
                 f"{subject} - {name}",  # Objet de l'email
                 f"Email: {email}\n\n{message}",  # Corps de l'email
                 email,  # Email de l'expéditeur
-                ['7e818481ae@emailbbox.pro'],  # Email du destinataire (support)
+                ['mouadkhaled2004@gmail.com'],  # Email du destinataire (support)
                 fail_silently=False,  # Gérer les erreurs d'envoi
             )
             return render(request, 'contact_us.html')
