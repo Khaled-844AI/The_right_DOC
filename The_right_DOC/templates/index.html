@@ -23,6 +23,12 @@
     <!-- Titre de la page -->
     <title>{% block title %}Home{% endblock %} | The right doc</title>
 
+  <link rel="icon" href="{% static 'img/icon/favicon.ico' %}" type="image/x-icon">
+    <!-- For multiple resolutions -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/icon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/icon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'img/icon/site.webmanifest' %}">
+
     <!-- Autres éléments du head -->
     {% block extra_head %}{% endblock %}
   </head>
