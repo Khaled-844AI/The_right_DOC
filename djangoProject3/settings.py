@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'The_right_DOC.apps.TheRightDocConfig',
-    'django_extensions',
 ]
 
 GRAPH_MODELS = {
