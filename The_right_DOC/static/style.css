@@ -68,7 +68,10 @@ div {
   transform: translate(-100%);
   transition: 1s;
 }
-
+.glow {
+            color: #023552; /* Set text color to blue */
+            text-shadow: 0 0 10px #c0c3c4; /* Add a glowing effect */
+}
 .show{
   opacity: 1;
   filter: blur(0);
